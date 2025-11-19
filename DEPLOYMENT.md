@@ -1,23 +1,253 @@
 # Deployment Guide
 
-This guide will help you deploy the Pockets application to production.
+This guide explains how to deploy the Pockets application.
+
+---
+
+## Table of Contents
+
+1. [Self-Hosted Deployment (Own Server)](#self-hosted-deployment)
+2. [Cloud Platform Deployment (Vercel/Netlify)](#cloud-platform-deployment)
+
+---
+
+# Self-Hosted Deployment
+
+Deploy to your own VPS or dedicated server with nginx.
 
 ## Prerequisites
 
-1. GitHub account
-2. Vercel or Netlify account (free tier is fine)
-3. Domain name (optional, can use provided subdomain)
+- Linux server (Ubuntu 20.04+ recommended)
+- Root or sudo access
+- Domain name pointed to your server
+- Node.js v18+ installed
+- nginx installed
 
-## Option 1: Deploy to Vercel (Recommended)
+---
+
+## Quick Deployment
+
+### Recommended Workflow
+
+```bash
+# 1. SSH into your server
+ssh user@your-server.com
+
+# 2. Navigate to project directory
+cd /path/to/pockets
+
+# 3. Pull latest changes
+git pull
+
+# 4. Deploy (build and copy to web root)
+sudo ./deploy.sh --no-pull
+```
+
+---
+
+## Deployment Script Options
+
+The `deploy.sh` script supports several options:
+
+```bash
+# Full deployment with git pull
+sudo ./deploy.sh
+
+# Skip git pull (recommended when you pull manually)
+sudo ./deploy.sh --no-pull
+
+# Show help
+sudo ./deploy.sh --help
+```
+
+---
+
+## What the Deployment Script Does
+
+1. **Creates Backup**: Backs up current deployment to `/var/backups/pockets/`
+2. **Pulls Code** (optional): Updates from git repository
+3. **Installs Dependencies**: Runs `npm install`
+4. **Builds Application**: Runs `npm run build` (TypeScript + Vite)
+5. **Deploys Files**: Copies `dist/` to `/var/www/pockets/`
+6. **Sets Permissions**: Sets proper ownership (`www-data:www-data`)
+7. **Tests Nginx**: Validates nginx configuration
+8. **Reloads Nginx**: Applies changes
+9. **Cleanup**: Removes old backups (keeps last 5)
+
+---
+
+## First-Time Server Setup
+
+If this is your first deployment:
+
+```bash
+# 1. Clone repository on server
+cd /var/www
+sudo git clone https://github.com/your-username/pockets.git pockets-repo
+cd pockets-repo
+
+# 2. Run setup script (configures nginx, SSL, etc.)
+sudo chmod +x setup.sh
+sudo ./setup.sh
+
+# 3. Deploy
+sudo chmod +x deploy.sh
+sudo ./deploy.sh
+```
+
+The setup script will:
+- Create nginx configuration
+- Set up SSL with Let's Encrypt
+- Configure firewall
+- Install dependencies
+
+---
+
+## Configuration
+
+### Web Root
+
+Default: `/var/www/pockets`
+
+To change, edit `deploy.sh`:
+```bash
+WEB_ROOT="/var/www/your-custom-path"
+```
+
+### Backup Directory
+
+Default: `/var/backups/pockets`
+
+To change, edit `deploy.sh`:
+```bash
+BACKUP_DIR="/your/backup/path"
+```
+
+---
+
+## Rollback
+
+If deployment fails, the script automatically rolls back to the previous backup.
+
+### Manual Rollback
+
+```bash
+# List available backups
+ls -lt /var/backups/pockets/
+
+# Restore a specific backup
+sudo cp -r /var/backups/pockets/backup_YYYYMMDD_HHMMSS/* /var/www/pockets/
+sudo chown -R www-data:www-data /var/www/pockets
+sudo systemctl reload nginx
+```
+
+---
+
+## Troubleshooting
+
+### Permission Denied
+
+Run with `sudo`:
+```bash
+sudo ./deploy.sh --no-pull
+```
+
+### Build Fails
+
+Check Node.js version:
+```bash
+node --version  # Should be v18+
+npm --version
+```
+
+Install dependencies manually:
+```bash
+npm install
+npm run build
+```
+
+### Nginx Issues
+
+Test configuration:
+```bash
+sudo nginx -t
+```
+
+Check status:
+```bash
+sudo systemctl status nginx
+```
+
+View error logs:
+```bash
+sudo tail -f /var/log/nginx/error.log
+```
+
+### Site Not Updating
+
+Clear nginx cache:
+```bash
+sudo systemctl restart nginx
+```
+
+Clear browser cache or use hard refresh (Ctrl+Shift+R).
+
+---
+
+## Complete Workflow Example
+
+```bash
+# On local machine: commit and push
+git add .
+git commit -m "feat: add new feature"
+git push origin main
+
+# On server: pull and deploy
+ssh user@server
+cd /var/www/pockets-repo
+git pull origin main
+sudo ./deploy.sh --no-pull
+
+# Verify
+curl -I https://your-domain.com
+```
+
+---
+
+## Monitoring
+
+After deployment:
+
+1. **Check website**: Visit your domain
+2. **Check console**: Open browser DevTools
+3. **Check nginx logs**: `sudo tail -f /var/log/nginx/access.log`
+4. **Check SSL**: `sudo certbot certificates`
+
+---
+
+## Security
+
+- Script requires `sudo` to write to `/var/www/` and reload nginx
+- Only run on trusted code
+- Review changes before deploying
+- Backups kept automatically (last 5)
+
+---
+
+# Cloud Platform Deployment
+
+For simpler deployment without managing a server.
+
+## Option 1: Vercel (Recommended)
 
 ### Step 1: Push to GitHub
 
 ```bash
 git init
 git add .
-git commit -m "Initial commit: Pockets MVP"
+git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/pockets-app.git
+git remote add origin https://github.com/YOUR_USERNAME/pockets.git
 git push -u origin main
 ```
 
@@ -26,148 +256,187 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com)
 2. Click "New Project"
 3. Import your GitHub repository
-4. Vercel will auto-detect Vite settings:
-   - Framework Preset: Vite
+4. Vercel auto-detects Vite:
+   - Framework: Vite
    - Build Command: `npm run build`
    - Output Directory: `dist`
 5. Click "Deploy"
 
 ### Step 3: Custom Domain (Optional)
 
-1. In Vercel project settings, go to "Domains"
-2. Add your custom domain (e.g., pockets.lv)
-3. Follow DNS configuration instructions
-4. Wait for DNS propagation (can take up to 48 hours)
+1. In project settings → "Domains"
+2. Add your custom domain
+3. Follow DNS instructions
+4. Wait for DNS propagation
 
-## Option 2: Deploy to Netlify
+---
+
+## Option 2: Netlify
 
 ### Step 1: Push to GitHub
 
-Same as Vercel Step 1 above.
+Same as Vercel.
 
 ### Step 2: Import to Netlify
 
 1. Go to [netlify.com](https://netlify.com)
 2. Click "New site from Git"
-3. Connect to your GitHub repository
-4. Configure build settings:
+3. Connect to GitHub
+4. Configure:
    - Build Command: `npm run build`
    - Publish Directory: `dist`
-5. Click "Deploy site"
+5. Click "Deploy"
 
-The `netlify.toml` file will automatically configure redirects for SPA routing.
+The `netlify.toml` file configures SPA routing automatically.
 
-### Step 3: Custom Domain (Optional)
-
-1. In Netlify site settings, go to "Domain management"
-2. Add your custom domain
-3. Follow DNS configuration instructions
-
-## Environment Variables
-
-This MVP doesn't use any environment variables. All settings are hardcoded.
-
-For future versions, you might want to add:
-- `VITE_API_URL` - Backend API URL
-- `VITE_ANALYTICS_ID` - Analytics tracking ID
-- etc.
+---
 
 ## Post-Deployment Checklist
 
-- [ ] Visit deployed URL and test all pages
-- [ ] Test Calculator with sample data (e.g., €2000 salary, €400 rent, €100 utilities)
-- [ ] Create a goal and verify it saves
-- [ ] Add expenses and verify they display correctly
-- [ ] Check that data persists after page refresh
-- [ ] Test on mobile device (responsive design)
-- [ ] Verify all internal links work
-- [ ] Test contact forms/emails (if applicable)
+- [ ] Visit URL and test all pages
+- [ ] Test Calculator with sample data
+- [ ] Create goal and verify it saves
+- [ ] Add expenses and verify display
+- [ ] Check data persists after refresh
+- [ ] Test on mobile (responsive)
+- [ ] Verify all links work
+- [ ] Check browser console for errors
+
+---
+
+## Environment Variables
+
+Currently none needed. All settings are client-side.
+
+For future versions:
+- `VITE_API_URL` - Backend API
+- `VITE_ANALYTICS_ID` - Analytics
+
+---
 
 ## Monitoring
 
-### Vercel
+### Self-Hosted
 
-- Vercel provides built-in analytics
-- Check deployment logs in Vercel dashboard
-- Monitor function invocations (if using serverless functions)
+- nginx access logs: `/var/log/nginx/access.log`
+- nginx error logs: `/var/log/nginx/error.log`
+- Application errors: Browser console
 
-### Netlify
+### Vercel/Netlify
 
-- Netlify provides built-in analytics
-- Check build logs in Netlify dashboard
-- Monitor bandwidth usage
+- Built-in analytics
+- Deployment logs in dashboard
+- Error tracking available
 
-## Troubleshooting
+---
 
-### Build Fails
+## Performance
 
-1. Check TypeScript errors: `npm run build` locally
-2. Verify all dependencies are in package.json
-3. Check build logs for specific errors
+Both cloud platforms and nginx include:
+- gzip compression
+- CDN
+- HTTP/2
+- Automatic caching
+- SSL/TLS
 
-### Routing Issues (404 on refresh)
+---
 
-- Ensure `vercel.json` or `netlify.toml` is properly configured
-- These files handle SPA routing redirects
+## Cost Estimate
 
-### Data Not Persisting
+### Self-Hosted
+- VPS: €5-20/month (DigitalOcean, Hetzner, etc.)
+- Domain: €15-30/year
+- Total: ~€75-270/year
 
-- Check browser localStorage is enabled
-- Verify no browser extensions are blocking localStorage
-- Test in incognito mode
+### Cloud (Free Tier)
+- Vercel/Netlify: Free for personal
+- Domain: €15-30/year
+- Total: ~€15-30/year
 
-## Updating the Deployment
+### Scaling
+- Self-hosted: Upgrade VPS
+- Cloud: Upgrade to Pro (~$20/month)
 
-### Automatic Deployment
+---
 
-Both Vercel and Netlify support automatic deployments:
+## SSL/HTTPS
 
-1. Push changes to GitHub:
-   ```bash
-   git add .
-   git commit -m "Update feature X"
-   git push
-   ```
+### Self-Hosted
+- Let's Encrypt (free, auto-renewal)
+- Configured by `setup.sh`
 
-2. The platform will automatically:
-   - Detect the push
-   - Run the build
-   - Deploy if successful
+### Cloud
+- Automatic SSL (Vercel/Netlify)
+- Free, auto-renewed
+- No configuration needed
 
-### Manual Deployment
+---
 
-If needed, you can trigger manual deployments:
+## Backup Strategy
 
-**Vercel:**
-```bash
-npm install -g vercel
-vercel --prod
+Since data is in localStorage:
+
+1. **User responsibility**: Users manage their data
+2. **Future**: Add export/import
+3. **Cloud sync**: Consider in v2
+
+For self-hosted deployments, the script keeps last 5 backups.
+
+---
+
+## Automated Deployments
+
+### GitHub Actions (Self-Hosted)
+
+Create `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/pockets-repo
+            git pull origin main
+            sudo ./deploy.sh --no-pull
 ```
 
-**Netlify:**
-```bash
-npm install -g netlify-cli
-netlify deploy --prod
-```
+### GitHub Actions (Vercel/Netlify)
 
-## Performance Optimization
+Automatic - no setup needed. Pushes to main auto-deploy.
 
-After deployment, consider:
-
-1. **Enable gzip compression** (usually automatic)
-2. **Add a CDN** (Vercel and Netlify include this)
-3. **Optimize images** (compress, use WebP format)
-4. **Code splitting** (Vite does this automatically)
-5. **Enable caching** (configure in platform settings)
+---
 
 ## Domain Configuration
 
-### For pockets.lv:
+### For .lv domains:
 
-1. Purchase domain from registrar (e.g., nic.lv for .lv domains)
-2. In domain registrar DNS settings, add:
+Purchase from nic.lv, then add DNS records:
 
-**For Vercel:**
+**Self-Hosted:**
+```
+Type: A
+Name: @
+Value: YOUR_SERVER_IP
+
+Type: A
+Name: www
+Value: YOUR_SERVER_IP
+```
+
+**Vercel:**
 ```
 Type: CNAME
 Name: www
@@ -178,7 +447,7 @@ Name: @
 Value: 76.76.21.21
 ```
 
-**For Netlify:**
+**Netlify:**
 ```
 Type: CNAME
 Name: www
@@ -189,67 +458,23 @@ Name: @
 Value: 75.2.60.5
 ```
 
-3. Wait for DNS propagation (check with [whatsmydns.net](https://www.whatsmydns.net))
+---
 
-## SSL/HTTPS
+## Need Help?
 
-Both Vercel and Netlify provide free SSL certificates automatically:
-- Certificates are auto-renewed
-- HTTPS is enforced by default
-- No additional configuration needed
+### Self-Hosted
+- Check logs: `/var/log/nginx/error.log`
+- Test nginx: `sudo nginx -t`
+- Check backups: `ls -lt /var/backups/pockets/`
 
-## Analytics (Optional)
-
-To add analytics after deployment:
-
-1. **Google Analytics:**
-   - Add GA script to index.html
-   - Or use react-ga package
-
-2. **Plausible (Privacy-friendly):**
-   - Add Plausible script to index.html
-   - No cookies, GDPR-compliant
-
-## Backup Strategy
-
-Since data is stored in localStorage:
-
-1. **User Responsibility:** Users manage their own data
-2. **Future Enhancement:** Add export/import functionality
-3. **Cloud Sync:** Consider implementing in v2
-
-## Cost Estimate
-
-**MVP Deployment (Free Tier):**
-- Vercel: Free for personal projects
-- Netlify: Free for personal projects
-- Domain: ~€15-30/year for .lv domain
-
-**Expected Traffic:**
-- Free tier supports ~100K requests/month
-- Plenty for MVP phase
-
-**Scaling:**
-- If traffic grows, upgrade to Pro plans (~$20/month)
-
-## Next Steps After Deployment
-
-1. Share with beta users
-2. Collect feedback
-3. Monitor error logs
-4. Iterate based on user feedback
-5. Plan v2 features
-
-## Support
-
-For deployment issues:
+### Cloud
 - Vercel: https://vercel.com/support
-- Netlify: https://www.netlify.com/support/
+- Netlify: https://netlify.com/support
 
-For application issues:
-- Create issue on GitHub
-- Email: hello@pockets.lv
+### Application
+- GitHub issues
+- Check browser console
 
 ---
 
-Good luck with your deployment! 🚀
+**Last Updated**: 2024-11-19

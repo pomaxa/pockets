@@ -280,7 +280,7 @@ export default function Expenses() {
             htmlFor="csv-upload"
             className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-semibold cursor-pointer"
           >
-            Import CSV
+            Import Revolut CSV
           </label>
           <button
             onClick={() => {
@@ -474,9 +474,9 @@ export default function Expenses() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Import Preview</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Revolut CSV Import Preview</h2>
               <p className="text-gray-600 mt-1">
-                Found {importedExpenses.length} transactions. Select which ones to import.
+                Found {importedExpenses.length} expenses. Select which ones to import. (Pocket transfers and income are automatically filtered out)
               </p>
             </div>
 

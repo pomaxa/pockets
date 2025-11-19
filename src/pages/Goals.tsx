@@ -147,6 +147,23 @@ export default function Goals() {
     return calculateMonthsToGoal(goal.targetAmount, monthlyAllocation, goal.currentAmount);
   };
 
+  const formatMonthsToYears = (totalMonths: number): string => {
+    if (totalMonths < 12) {
+      return `~${totalMonths} ${totalMonths === 1 ? 'month' : 'months'}`;
+    }
+
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+
+    if (months === 0) {
+      return `~${years} ${years === 1 ? 'year' : 'years'}`;
+    }
+
+    const yearText = `${years} ${years === 1 ? 'year' : 'years'}`;
+    const monthText = `${months} ${months === 1 ? 'month' : 'months'}`;
+    return `~${yearText} and ${monthText}`;
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-8">
@@ -327,16 +344,28 @@ export default function Goals() {
                       {formatCurrency(remaining > 0 ? remaining : 0)}
                     </p>
                   </div>
-                  {profile && !isComplete && (
-                    <div className="bg-blue-50 p-3 rounded-md">
-                      <p className="text-sm text-gray-600">Est. Months to Goal</p>
-                      <p className="text-lg font-bold text-blue-600">
-                        {monthsToReachGoal(goal) > 0
-                          ? `~${monthsToReachGoal(goal)} months`
-                          : 'Set up calculator first'}
-                      </p>
-                    </div>
-                  )}
+                  {profile && !isComplete && (() => {
+                    const calculation = calculatePockets(
+                      profile.monthlySalary,
+                      profile.housingCost,
+                      profile.utilitiesCost,
+                      profile.emergencyFundMonths
+                    );
+                    const months = monthsToReachGoal(goal);
+
+                    return (
+                      <div className="bg-blue-50 p-3 rounded-md">
+                        <p className="text-sm text-gray-600">Est. Months to Goal</p>
+                        <p className="text-lg font-bold text-blue-600">
+                          {months > 0
+                            ? formatMonthsToYears(months)
+                            : calculation.recommendedSavings > 0
+                            ? 'Unable to calculate'
+                            : 'No funds available for savings'}
+                        </p>
+                      </div>
+                    );
+                  })()}
                   {isComplete && (
                     <div className="bg-green-50 p-3 rounded-md">
                       <p className="text-sm text-gray-600">Status</p>

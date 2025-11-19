@@ -3,6 +3,11 @@
 ###############################################################################
 # Pockets Deployment Script
 # Use this script to deploy updates to production
+#
+# Usage:
+#   sudo ./deploy.sh              # Full deployment with git pull
+#   sudo ./deploy.sh --no-pull    # Skip git pull (useful if you already pulled)
+#   sudo ./deploy.sh --help       # Show help
 ###############################################################################
 
 set -e  # Exit on any error
@@ -18,6 +23,37 @@ NC='\033[0m' # No Color
 APP_NAME="pockets"
 WEB_ROOT="/var/www/${APP_NAME}"
 BACKUP_DIR="/var/backups/${APP_NAME}"
+
+# Parse command line arguments
+SKIP_PULL=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --no-pull)
+            SKIP_PULL=true
+            shift
+            ;;
+        --help|-h)
+            echo "Pockets Deployment Script"
+            echo ""
+            echo "Usage:"
+            echo "  sudo ./deploy.sh              # Full deployment with git pull"
+            echo "  sudo ./deploy.sh --no-pull    # Skip git pull step"
+            echo "  sudo ./deploy.sh --help       # Show this help"
+            echo ""
+            echo "Typical workflow:"
+            echo "  ssh user@server"
+            echo "  cd /path/to/pockets"
+            echo "  git pull                       # Pull latest code"
+            echo "  sudo ./deploy.sh --no-pull     # Build and deploy"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 # Helper functions
 print_info() {
@@ -63,6 +99,11 @@ create_backup() {
 
 # Pull latest code (if using git)
 pull_code() {
+    if [ "$SKIP_PULL" = true ]; then
+        print_info "Skipping git pull (--no-pull flag set)"
+        return 0
+    fi
+
     if [ -d ".git" ]; then
         print_info "Pulling latest code from git..."
         git pull origin main || git pull origin master

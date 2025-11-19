@@ -93,7 +93,7 @@ const parseCSV = (csvText: string): string[][] => {
 
 /**
  * Parse Revolut CSV format
- * Expected columns: Date, Description, Amount, Currency, [Category]
+ * Expected columns: Date, Description, Amount, Currency, [Category], [Product]
  */
 export const parseRevolutCSV = (csvText: string): Expense[] => {
   const rows = parseCSV(csvText);
@@ -108,6 +108,7 @@ export const parseRevolutCSV = (csvText: string): Expense[] => {
   const descIndex = headers.findIndex((h) => h.includes('description') || h.includes('title'));
   const amountIndex = headers.findIndex((h) => h.includes('amount'));
   const categoryIndex = headers.findIndex((h) => h.includes('category') || h.includes('type'));
+  const productIndex = headers.findIndex((h) => h.includes('product'));
 
   if (dateIndex === -1 || amountIndex === -1) {
     throw new Error('CSV must contain Date and Amount columns');
@@ -126,8 +127,12 @@ export const parseRevolutCSV = (csvText: string): Expense[] => {
       const description = descIndex !== -1 ? row[descIndex]?.trim() : '';
       const amountStr = row[amountIndex]?.trim().replace(/[^\d.-]/g, ''); // Remove currency symbols
       const revolutCategory = categoryIndex !== -1 ? row[categoryIndex]?.trim() : '';
+      const product = productIndex !== -1 ? row[productIndex]?.trim() : '';
 
       if (!dateStr || !amountStr) continue;
+
+      // Skip internal Revolut Pocket transfers (not real expenses)
+      if (product.toLowerCase() === 'pocket') continue;
 
       const parsedAmount = parseFloat(amountStr);
 

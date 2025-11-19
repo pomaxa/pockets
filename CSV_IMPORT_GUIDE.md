@@ -26,6 +26,7 @@ Revolut CSV exports typically include these columns:
 - **Amount**: Transaction amount (negative for expenses)
 - **Currency**: EUR, USD, etc.
 - **Category**: Revolut's automatic categorization
+- **Product**: Transaction type (e.g., "Current", "Pocket", "Savings")
 
 **Example:**
 ```csv
@@ -36,7 +37,7 @@ Date,Description,Amount,Currency,Category
 2024-11-13,Netflix,-11.99,EUR,Entertainment
 ```
 
-**Note:** In this example, only the 3 expenses (negative amounts) will be imported. The salary (positive amount) will be automatically skipped.
+**Note:** Only expenses (negative amounts) are imported. Income (positive amounts) and Pocket transfers (Product = "Pocket") are automatically filtered out.
 
 ### **Generic CSV Format**
 
@@ -102,6 +103,7 @@ The importer automatically maps Revolut categories to Pockets categories:
 - Handles various date formats (DD/MM/YYYY, YYYY-MM-DD, etc.)
 - Removes currency symbols automatically
 - **Filters out income:** Only imports negative amounts (expenses)
+- **Filters out Pocket transfers:** Skips internal Revolut Pocket movements (Product = "Pocket")
 - Converts negative amounts to positive for storage (e.g., -45.50 → 45.50)
 
 ### **Preview & Selection**
@@ -176,9 +178,10 @@ This file contains 15 sample transactions you can use to test the import feature
 **During Import:**
 1. ✅ Review the preview carefully before confirming
 2. ✅ Income transactions are already filtered out automatically
-3. ✅ Check category assignments
-4. ✅ Verify dates are correct
-5. ✅ Deselect any transactions you don't want to import
+3. ✅ Revolut Pocket transfers are already filtered out automatically
+4. ✅ Check category assignments
+5. ✅ Verify dates are correct
+6. ✅ Deselect any transactions you don't want to import
 
 **After Importing:**
 1. ✅ Review imported expenses in the Expenses list
@@ -214,9 +217,9 @@ While optimized for Revolut, the CSV importer works with most banks that export 
 Date,Amount
 ```
 
-### **Recommended Columns:**
+### **Recommended Columns (Full Revolut Format):**
 ```csv
-Date,Description,Amount,Currency,Category
+Date,Description,Amount,Currency,Category,Product
 ```
 
 ### **Supported Date Formats:**
@@ -231,7 +234,7 @@ Date,Description,Amount,Currency,Category
 - With currency symbol: `€45.50` or `-€45.50`
 - Zero amounts: `0.00` (skipped)
 
-**Important:** Only expenses (negative amounts) are imported. Income and positive amounts are automatically filtered out.
+**Important:** Only expenses (negative amounts) are imported. Income, positive amounts, and Pocket transfers (Product = "Pocket") are automatically filtered out.
 
 ---
 
