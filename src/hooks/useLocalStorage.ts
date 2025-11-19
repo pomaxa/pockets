@@ -1,4 +1,4 @@
-import { UserProfile, Goal, Expense } from '../types';
+import { UserProfile, Goal, Expense, Debt } from '../types';
 
 /**
  * Custom hook for managing localStorage operations
@@ -103,12 +103,53 @@ export const useLocalStorage = () => {
     saveExpenses(filtered);
   };
 
+  // Debts operations
+  const getDebts = (): Debt[] => {
+    try {
+      const data = localStorage.getItem('pockets_debts');
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error reading debts from localStorage:', error);
+      return [];
+    }
+  };
+
+  const saveDebts = (debts: Debt[]): void => {
+    try {
+      localStorage.setItem('pockets_debts', JSON.stringify(debts));
+    } catch (error) {
+      console.error('Error saving debts to localStorage:', error);
+    }
+  };
+
+  const addDebt = (debt: Debt): void => {
+    const debts = getDebts();
+    debts.push(debt);
+    saveDebts(debts);
+  };
+
+  const updateDebt = (debtId: string, updatedDebt: Partial<Debt>): void => {
+    const debts = getDebts();
+    const index = debts.findIndex((d) => d.id === debtId);
+    if (index !== -1) {
+      debts[index] = { ...debts[index], ...updatedDebt };
+      saveDebts(debts);
+    }
+  };
+
+  const deleteDebt = (debtId: string): void => {
+    const debts = getDebts();
+    const filtered = debts.filter((d) => d.id !== debtId);
+    saveDebts(filtered);
+  };
+
   // Clear all data
   const clearAllData = (): void => {
     try {
       localStorage.removeItem('pockets_profile');
       localStorage.removeItem('pockets_goals');
       localStorage.removeItem('pockets_expenses');
+      localStorage.removeItem('pockets_debts');
     } catch (error) {
       console.error('Error clearing all data from localStorage:', error);
     }
@@ -130,6 +171,12 @@ export const useLocalStorage = () => {
     saveExpenses,
     addExpense,
     deleteExpense,
+    // Debts methods
+    getDebts,
+    saveDebts,
+    addDebt,
+    updateDebt,
+    deleteDebt,
     // General methods
     clearAllData,
   };

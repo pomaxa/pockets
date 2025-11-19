@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Calculator from './pages/Calculator';
 import Goals from './pages/Goals';
 import Expenses from './pages/Expenses';
+import Debts from './pages/Debts';
 import Info from './pages/Info';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="calculator" element={<Calculator />} />
           <Route path="goals" element={<Goals />} />
           <Route path="expenses" element={<Expenses />} />
+          <Route path="debts" element={<Debts />} />
           <Route path="info" element={<Info />} />
         </Route>
       </Routes>

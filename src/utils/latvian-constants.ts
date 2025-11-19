@@ -20,6 +20,7 @@ export const EXPENSE_CATEGORIES = [
   { value: 'Entertainment', label: 'Entertainment / Izklaide', emoji: '🎉' },
   { value: 'Health', label: 'Health / Veselība', emoji: '💊' },
   { value: 'Utilities', label: 'Utilities / Komunālie', emoji: '💡' },
+  { value: 'Debt', label: 'Debt Payment / Parādu maksājums', emoji: '💳' },
   { value: 'Other', label: 'Other / Citi', emoji: '📦' },
 ] as const;
 

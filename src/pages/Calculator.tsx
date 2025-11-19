@@ -93,6 +93,7 @@ export default function Calculator() {
       housingType,
       housingCost: housing,
       utilitiesCost: utilities,
+      monthlyDebtPayments: 0, // TODO: Calculate from debts
       currentSavings: savings,
       emergencyFundMonths,
       savingsPercentage: 50,

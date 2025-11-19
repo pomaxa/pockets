@@ -33,6 +33,9 @@ export default function Layout() {
               <Link to="/app/expenses" className={navLinkClass('/app/expenses')}>
                 Expenses
               </Link>
+              <Link to="/app/debts" className={navLinkClass('/app/debts')}>
+                Debts
+              </Link>
               <Link to="/app/info" className={navLinkClass('/app/info')}>
                 Info
               </Link>
@@ -57,6 +60,9 @@ export default function Layout() {
         </Link>
         <Link to="/app/expenses" className={navLinkClass('/app/expenses')}>
           Expenses
+        </Link>
+        <Link to="/app/debts" className={navLinkClass('/app/debts')}>
+          Debts
         </Link>
         <Link to="/app/info" className={navLinkClass('/app/info')}>
           Info
