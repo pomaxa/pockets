@@ -26,16 +26,36 @@ export default function Calculator() {
   // Error state
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load existing profile on mount
+  // Load existing profile or draft on mount
   useEffect(() => {
+    // First try to load saved draft (form in progress)
+    const draft = localStorage.getItem('pockets_calculator_draft');
+    if (draft) {
+      try {
+        const draftData = JSON.parse(draft);
+        setMonthlySalary(draftData.monthlySalary || '');
+        setHousingType(draftData.housingType || 'rent');
+        setHousingCost(draftData.housingCost || '');
+        setUtilitiesCost(draftData.utilitiesCost || '');
+        setEmergencyFundMonths(draftData.emergencyFundMonths || 3);
+        setCurrentSavings(draftData.currentSavings || '0');
+      } catch (error) {
+        console.error('Error loading calculator draft:', error);
+      }
+    }
+
+    // Then load completed profile to show results
     const profile = getProfile();
     if (profile) {
-      setMonthlySalary(profile.monthlySalary.toString());
-      setHousingType(profile.housingType);
-      setHousingCost(profile.housingCost.toString());
-      setUtilitiesCost(profile.utilitiesCost.toString());
-      setEmergencyFundMonths(profile.emergencyFundMonths);
-      setCurrentSavings(profile.currentSavings.toString());
+      // If no draft, populate form with profile data
+      if (!draft) {
+        setMonthlySalary(profile.monthlySalary.toString());
+        setHousingType(profile.housingType);
+        setHousingCost(profile.housingCost.toString());
+        setUtilitiesCost(profile.utilitiesCost.toString());
+        setEmergencyFundMonths(profile.emergencyFundMonths);
+        setCurrentSavings(profile.currentSavings.toString());
+      }
 
       // Calculate and show results
       const calc = calculatePockets(
@@ -48,6 +68,23 @@ export default function Calculator() {
       setShowResults(true);
     }
   }, []);
+
+  // Auto-save form draft to localStorage whenever inputs change
+  useEffect(() => {
+    const draftData = {
+      monthlySalary,
+      housingType,
+      housingCost,
+      utilitiesCost,
+      emergencyFundMonths,
+      currentSavings,
+    };
+
+    // Only save if at least one field has a value
+    if (monthlySalary || housingCost || utilitiesCost) {
+      localStorage.setItem('pockets_calculator_draft', JSON.stringify(draftData));
+    }
+  }, [monthlySalary, housingType, housingCost, utilitiesCost, emergencyFundMonths, currentSavings]);
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -100,6 +137,9 @@ export default function Calculator() {
       createdAt: new Date().toISOString(),
     };
     saveProfile(profile);
+
+    // Clear draft since we've now saved the complete profile
+    localStorage.removeItem('pockets_calculator_draft');
   };
 
   return (

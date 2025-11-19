@@ -1,0 +1,9 @@
+<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pocket icon -->
+  <path d="M4 8C4 6.34315 5.34315 5 7 5H17C18.6569 5 20 6.34315 20 8V18C20 23.5228 15.5228 28 10 28H10C4.47715 28 0 23.5228 0 18V8C0 6.34315 1.34315 5 3 5H4Z" fill="#10b981"/>
+  <rect x="6" y="2" width="12" height="6" rx="1" fill="#10b981"/>
+  <circle cx="10" cy="16" r="2" fill="white"/>
+
+  <!-- Text -->
+  <text x="28" y="22" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#1f2937">Pockets</text>
+</svg>

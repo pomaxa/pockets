@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pocket Calculator - Pockets</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header with Navigation -->
+  <header>
+    <div class="header-content">
+      <a href="index.html">
+        <img src="assets/logo.svg" alt="Pockets" class="logo">
+      </a>
+      <nav>
+        <a href="calculator.html" class="active">Calculator</a>
+        <a href="#">Goals</a>
+        <a href="#">Expenses</a>
+        <a href="#">Debts</a>
+        <a href="index.html">Info</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1>Pocket Calculator</h1>
+      <p>Tell us about your income and expenses, and we'll show you how to divide your money into different "pockets"</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="grid-2">
+      <!-- Left Column: Form -->
+      <div>
+        <div class="card">
+          <h2 class="mb-3">Your Information</h2>
+
+          <form id="calculatorForm">
+            <!-- Monthly Salary -->
+            <div class="form-group">
+              <label for="salary" class="required">Monthly Salary (Gross)</label>
+              <input
+                type="number"
+                id="salary"
+                name="salary"
+                placeholder="€2000"
+                value="2000"
+                min="0"
+                step="1"
+              >
+            </div>
+
+            <!-- Housing Type -->
+            <div class="form-group">
+              <label for="housingType" class="required">Housing Type</label>
+              <select id="housingType" name="housingType">
+                <option value="rent" selected>Rent</option>
+                <option value="mortgage">Mortgage</option>
+                <option value="own">Own (No Mortgage)</option>
+                <option value="family">Living with Family</option>
+              </select>
+            </div>
+
+            <!-- Housing Cost -->
+            <div class="form-group">
+              <label for="housingCost" class="required">Housing Cost (Monthly)</label>
+              <input
+                type="number"
+                id="housingCost"
+                name="housingCost"
+                placeholder="€400"
+                value="400"
+                min="0"
+                step="1"
+              >
+            </div>
+
+            <!-- Utilities -->
+            <div class="form-group">
+              <label for="utilities" class="required">Utilities (Monthly)</label>
+              <input
+                type="number"
+                id="utilities"
+                name="utilities"
+                placeholder="€100"
+                value="100"
+                min="0"
+                step="1"
+              >
+            </div>
+
+            <!-- Emergency Fund Target -->
+            <div class="form-group">
+              <label for="emergencyMonths">Emergency Fund Target</label>
+              <select id="emergencyMonths" name="emergencyMonths">
+                <option value="3">3 months</option>
+                <option value="6" selected>6 months</option>
+                <option value="9">9 months</option>
+                <option value="12">12 months</option>
+              </select>
+            </div>
+
+            <!-- Current Savings -->
+            <div class="form-group">
+              <label for="currentSavings">Current Savings</label>
+              <input
+                type="number"
+                id="currentSavings"
+                name="currentSavings"
+                placeholder="€500"
+                value="500"
+                min="0"
+                step="1"
+              >
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-full">Calculate My Pockets</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Results -->
+      <div>
+        <div class="results-card">
+          <h2 class="mb-3">Your Pockets</h2>
+
+          <!-- Income Breakdown -->
+          <ul class="results-list">
+            <li>
+              <span>Gross Salary</span>
+              <span class="amount text-mono">€2,000</span>
+            </li>
+            <li>
+              <span>Estimated Taxes (~20%)</span>
+              <span class="amount amount-negative text-mono">-€400</span>
+            </li>
+            <li style="font-weight: 600; padding-top: 16px; padding-bottom: 16px;">
+              <span>Net Income</span>
+              <span class="amount amount-positive text-mono" style="font-size: 1.25rem;">€1,600</span>
+            </li>
+            <li>
+              <span>Mandatory Expenses</span>
+              <span class="amount amount-negative text-mono">-€500</span>
+            </li>
+            <li style="font-weight: 700; padding-top: 16px; padding-bottom: 16px; border-bottom: 3px solid #10b981;">
+              <span style="font-size: 1.125rem;">Remaining</span>
+              <span class="amount amount-positive amount-large text-mono">€1,100</span>
+            </li>
+          </ul>
+
+          <!-- Recommended Allocation -->
+          <div style="margin-top: 32px;">
+            <h3 class="mb-2">Recommended Allocation</h3>
+
+            <!-- Savings Pocket -->
+            <div class="info-card info-card-green">
+              <h4>Savings Pocket (50%)</h4>
+              <div class="value">€550 / month</div>
+              <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">For emergency fund, goals, and future</p>
+            </div>
+
+            <!-- Lifestyle Pocket -->
+            <div class="info-card info-card-blue">
+              <h4>Lifestyle Pocket (50%)</h4>
+              <div class="value">€550 / month</div>
+              <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">For food, transport, entertainment, etc.</p>
+            </div>
+
+            <!-- Emergency Fund Goal -->
+            <div class="info-card info-card-yellow">
+              <h4>Emergency Fund Target</h4>
+              <div class="value">€3,000</div>
+              <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">6 months of mandatory expenses</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-primary btn-full">Set a Savings Goal</button>
+            <button class="btn btn-secondary btn-full">Find Financial Advisor</button>
+          </div>
+
+          <!-- Additional Info -->
+          <div style="margin-top: 24px; padding: 16px; background-color: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+            <p style="margin: 0; font-size: 0.875rem; color: #065f46;">
+              <strong>Tip:</strong> Try to save at least 50% of your remaining income. This will help you build financial security and achieve your goals faster.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Information Section -->
+    <section style="margin-top: 64px; margin-bottom: 64px;">
+      <div class="section-header">
+        <h2>Understanding Your Pockets</h2>
+        <p>Here's what each pocket means and how to use it effectively</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <img src="assets/icon-money.svg" alt="Savings" class="card-icon">
+          <h3>Savings Pocket</h3>
+          <p>This is money you set aside for future needs and goals. Start with building your emergency fund, then work toward other savings goals like a vacation, car, or down payment.</p>
+        </div>
+
+        <div class="card">
+          <img src="assets/icon-expenses.svg" alt="Lifestyle" class="card-icon">
+          <h3>Lifestyle Pocket</h3>
+          <p>This covers your daily living expenses like food, transportation, entertainment, and personal items. Track your spending to make sure you stay within this amount.</p>
+        </div>
+
+        <div class="card">
+          <img src="assets/icon-goals.svg" alt="Emergency Fund" class="card-icon">
+          <h3>Emergency Fund</h3>
+          <p>A safety net that covers 3-12 months of mandatory expenses. This protects you from unexpected events like job loss, medical emergencies, or urgent repairs.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Pockets. Making financial literacy accessible.</p>
+      <a href="index.html">Learn more</a>
+    </div>
+  </footer>
+
+  <!-- Simple Calculator Script -->
+  <script>
+    document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Get form values
+      const salary = parseFloat(document.getElementById('salary').value) || 0;
+      const housingCost = parseFloat(document.getElementById('housingCost').value) || 0;
+      const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+      const emergencyMonths = parseFloat(document.getElementById('emergencyMonths').value) || 6;
+      const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+
+      // Calculate values
+      const estimatedTaxRate = 0.20; // 20% average tax rate for Latvia
+      const taxes = salary * estimatedTaxRate;
+      const netIncome = salary - taxes;
+      const mandatoryExpenses = housingCost + utilities;
+      const remaining = netIncome - mandatoryExpenses;
+
+      const savingsPocket = remaining * 0.50;
+      const lifestylePocket = remaining * 0.50;
+      const emergencyFundTarget = mandatoryExpenses * emergencyMonths;
+
+      // Format currency
+      const formatCurrency = (value) => {
+        return '€' + value.toLocaleString('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+      };
+
+      // Update the results display
+      const resultsHTML = `
+        <h2 class="mb-3">Your Pockets</h2>
+
+        <ul class="results-list">
+          <li>
+            <span>Gross Salary</span>
+            <span class="amount text-mono">${formatCurrency(salary)}</span>
+          </li>
+          <li>
+            <span>Estimated Taxes (~${estimatedTaxRate * 100}%)</span>
+            <span class="amount amount-negative text-mono">-${formatCurrency(taxes)}</span>
+          </li>
+          <li style="font-weight: 600; padding-top: 16px; padding-bottom: 16px;">
+            <span>Net Income</span>
+            <span class="amount amount-positive text-mono" style="font-size: 1.25rem;">${formatCurrency(netIncome)}</span>
+          </li>
+          <li>
+            <span>Mandatory Expenses</span>
+            <span class="amount amount-negative text-mono">-${formatCurrency(mandatoryExpenses)}</span>
+          </li>
+          <li style="font-weight: 700; padding-top: 16px; padding-bottom: 16px; border-bottom: 3px solid #10b981;">
+            <span style="font-size: 1.125rem;">Remaining</span>
+            <span class="amount amount-positive amount-large text-mono">${formatCurrency(remaining)}</span>
+          </li>
+        </ul>
+
+        <div style="margin-top: 32px;">
+          <h3 class="mb-2">Recommended Allocation</h3>
+
+          <div class="info-card info-card-green">
+            <h4>Savings Pocket (50%)</h4>
+            <div class="value">${formatCurrency(savingsPocket)} / month</div>
+            <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">For emergency fund, goals, and future</p>
+          </div>
+
+          <div class="info-card info-card-blue">
+            <h4>Lifestyle Pocket (50%)</h4>
+            <div class="value">${formatCurrency(lifestylePocket)} / month</div>
+            <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">For food, transport, entertainment, etc.</p>
+          </div>
+
+          <div class="info-card info-card-yellow">
+            <h4>Emergency Fund Target</h4>
+            <div class="value">${formatCurrency(emergencyFundTarget)}</div>
+            <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.875rem;">${emergencyMonths} months of mandatory expenses</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 12px;">
+          <button class="btn btn-primary btn-full">Set a Savings Goal</button>
+          <button class="btn btn-secondary btn-full">Find Financial Advisor</button>
+        </div>
+
+        <div style="margin-top: 24px; padding: 16px; background-color: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+          <p style="margin: 0; font-size: 0.875rem; color: #065f46;">
+            <strong>Tip:</strong> ${remaining > 0 ? 'Great! You have money left over after mandatory expenses. Try to save at least 50% of it.' : 'Warning: Your expenses exceed your income. Consider ways to reduce costs or increase income.'}
+          </p>
+        </div>
+      `;
+
+      document.querySelector('.results-card').innerHTML = resultsHTML;
+    });
+
+    // Trigger calculation on page load with default values
+    window.addEventListener('load', function() {
+      document.getElementById('calculatorForm').dispatchEvent(new Event('submit'));
+    });
+  </script>
+</body>
+</html>
