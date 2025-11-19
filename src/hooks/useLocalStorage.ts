@@ -97,6 +97,15 @@ export const useLocalStorage = () => {
     saveExpenses(expenses);
   };
 
+  const updateExpense = (expenseId: string, updatedExpense: Partial<Expense>): void => {
+    const expenses = getExpenses();
+    const index = expenses.findIndex((e) => e.id === expenseId);
+    if (index !== -1) {
+      expenses[index] = { ...expenses[index], ...updatedExpense };
+      saveExpenses(expenses);
+    }
+  };
+
   const deleteExpense = (expenseId: string): void => {
     const expenses = getExpenses();
     const filtered = expenses.filter((e) => e.id !== expenseId);
@@ -170,6 +179,7 @@ export const useLocalStorage = () => {
     getExpenses,
     saveExpenses,
     addExpense,
+    updateExpense,
     deleteExpense,
     // Debts methods
     getDebts,

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Goal, UserProfile } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { formatCurrency } from '../utils/formatters';
-import { calculateMonthsToGoal } from '../utils/calculations';
+import { calculateMonthsToGoal, calculatePockets } from '../utils/calculations';
 import { validateRequired, validateCost } from '../utils/validators';
 
 export default function Goals() {
@@ -11,6 +11,7 @@ export default function Goals() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
 
   // Form state
   const [goalName, setGoalName] = useState('');
@@ -50,32 +51,60 @@ export default function Goals() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddGoal = (e: React.FormEvent) => {
+  const handleSubmitGoal = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {
       return;
     }
 
-    const newGoal: Goal = {
-      id: Date.now().toString(),
-      name: goalName,
-      targetAmount: parseFloat(targetAmount),
-      currentAmount: parseFloat(currentAmount),
-      createdAt: new Date().toISOString(),
-      dueDate: dueDate || undefined,
-    };
+    if (editingGoalId) {
+      // Update existing goal
+      updateGoal(editingGoalId, {
+        name: goalName,
+        targetAmount: parseFloat(targetAmount),
+        currentAmount: parseFloat(currentAmount),
+        dueDate: dueDate || undefined,
+      });
+    } else {
+      // Create new goal
+      const newGoal: Goal = {
+        id: Date.now().toString(),
+        name: goalName,
+        targetAmount: parseFloat(targetAmount),
+        currentAmount: parseFloat(currentAmount),
+        createdAt: new Date().toISOString(),
+        dueDate: dueDate || undefined,
+      };
+      addGoal(newGoal);
+    }
 
-    addGoal(newGoal);
     loadGoals();
+    resetForm();
+  };
 
-    // Reset form
+  const handleEditGoal = (goal: Goal) => {
+    setGoalName(goal.name);
+    setTargetAmount(goal.targetAmount.toString());
+    setCurrentAmount(goal.currentAmount.toString());
+    setDueDate(goal.dueDate || '');
+    setEditingGoalId(goal.id);
+    setShowForm(true);
+    setErrors({});
+  };
+
+  const resetForm = () => {
     setGoalName('');
     setTargetAmount('');
     setCurrentAmount('0');
     setDueDate('');
+    setEditingGoalId(null);
     setShowForm(false);
     setErrors({});
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
   };
 
   const handleDeleteGoal = (goalId: string) => {
@@ -101,7 +130,20 @@ export default function Goals() {
 
   const monthsToReachGoal = (goal: Goal): number => {
     if (!profile) return 0;
-    const monthlyAllocation = profile.monthlySalary * (profile.savingsPercentage / 100) * 0.5; // Assume 50% of savings for this goal
+
+    // Calculate actual recommended savings based on income and expenses
+    const calculation = calculatePockets(
+      profile.monthlySalary,
+      profile.housingCost,
+      profile.utilitiesCost,
+      profile.emergencyFundMonths
+    );
+
+    // Use the recommended savings amount (already accounts for taxes and expenses)
+    // If user has multiple goals, they'll need to distribute savings between them
+    // For now, we assume all recommended savings go to this goal
+    const monthlyAllocation = calculation.recommendedSavings;
+
     return calculateMonthsToGoal(goal.targetAmount, monthlyAllocation, goal.currentAmount);
   };
 
@@ -113,18 +155,26 @@ export default function Goals() {
           <p className="text-gray-600">Track your progress toward financial goals</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) {
+              handleCancelEdit();
+            } else {
+              setShowForm(true);
+            }
+          }}
           className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
         >
           {showForm ? 'Cancel' : 'Add Goal'}
         </button>
       </div>
 
-      {/* Add Goal Form */}
+      {/* Add/Edit Goal Form */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">Create New Goal</h2>
-          <form onSubmit={handleAddGoal}>
+          <h2 className="text-xl font-bold mb-4 text-gray-900">
+            {editingGoalId ? 'Edit Goal' : 'Create New Goal'}
+          </h2>
+          <form onSubmit={handleSubmitGoal}>
             <div className="mb-4">
               <label className="block text-sm font-semibold mb-2 text-gray-700">
                 Goal Name *
@@ -183,12 +233,23 @@ export default function Goals() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
-            >
-              Create Goal
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
+              >
+                {editingGoalId ? 'Update Goal' : 'Create Goal'}
+              </button>
+              {editingGoalId && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         </div>
       )}
@@ -226,12 +287,20 @@ export default function Goals() {
                       </p>
                     )}
                   </div>
-                  <button
-                    onClick={() => handleDeleteGoal(goal.id)}
-                    className="text-accent hover:text-red-600 text-sm font-semibold"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditGoal(goal)}
+                      className="text-primary hover:text-green-700 text-sm font-semibold"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteGoal(goal.id)}
+                      className="text-accent hover:text-red-600 text-sm font-semibold"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mb-4">
