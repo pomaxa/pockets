@@ -10,6 +10,7 @@ This is the nginx configuration template that gets deployed to `/etc/nginx/sites
 
 - **HTTPS Enforcement:** All HTTP traffic redirects to HTTPS
 - **SSL/TLS Configuration:** Modern SSL configuration following Mozilla guidelines
+- **Unique SSL Session Cache:** Uses `SSL_POCKETS` to avoid conflicts with other sites on the same server
 - **SPA Routing Support:** All routes properly handled for React Router
 - **Static Asset Caching:** Long-term caching for CSS, JS, fonts, images
 - **Gzip Compression:** Enabled for text-based files
@@ -119,6 +120,22 @@ SSL certificate paths (configured after running `install-ssl.sh`):
 - **Private Key:** `/etc/letsencrypt/live/{{DOMAIN}}/privkey.pem`
 
 ### Troubleshooting
+
+#### SSL Session Cache Conflict
+If you see an error like:
+```
+the size X of shared memory zone "SSL" conflicts with already declared size Y
+```
+
+**Solution:** This happens when multiple nginx sites try to use the same SSL session cache name with different sizes. Pockets uses a unique cache name `SSL_POCKETS` to avoid this. If you still see this error, check other site configs:
+
+```bash
+# Find conflicting configs
+grep -r "ssl_session_cache shared:SSL_POCKETS" /etc/nginx/sites-enabled/
+
+# Use a different unique name in pockets.conf
+ssl_session_cache shared:SSL_POCKETS_V2:10m;
+```
 
 #### 502 Bad Gateway
 - Backend service not running (not applicable for static site)
