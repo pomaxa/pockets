@@ -268,7 +268,7 @@ export default function Debts() {
       {/* Add/Edit Debt Form */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-secondary-900">
             {editingDebtId ? 'Edit Debt' : 'Add New Debt'}
           </h2>
           <form onSubmit={handleSubmitDebt}>
@@ -282,7 +282,7 @@ export default function Debts() {
                   value={debtName}
                   onChange={(e) => setDebtName(e.target.value)}
                   placeholder="e.g., Visa Credit Card, Car Loan"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.name && <p className="text-accent text-sm mt-1">{errors.name}</p>}
@@ -295,7 +295,7 @@ export default function Debts() {
                 <select
                   value={debtType}
                   onChange={(e) => setDebtType(e.target.value as Debt['type'])}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 >
                   {DEBT_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -317,7 +317,7 @@ export default function Debts() {
                   value={totalAmount}
                   onChange={(e) => setTotalAmount(e.target.value)}
                   placeholder="e.g., 5000"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.total && <p className="text-accent text-sm mt-1">{errors.total}</p>}
@@ -333,7 +333,7 @@ export default function Debts() {
                   value={currentBalance}
                   onChange={(e) => setCurrentBalance(e.target.value)}
                   placeholder="e.g., 3500"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.balance && <p className="text-accent text-sm mt-1">{errors.balance}</p>}
@@ -351,7 +351,7 @@ export default function Debts() {
                   value={interestRate}
                   onChange={(e) => setInterestRate(e.target.value)}
                   placeholder="e.g., 15.5"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.rate && <p className="text-accent text-sm mt-1">{errors.rate}</p>}
@@ -367,7 +367,7 @@ export default function Debts() {
                   value={minimumPayment}
                   onChange={(e) => setMinimumPayment(e.target.value)}
                   placeholder="e.g., 50"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.minPayment && (
@@ -385,7 +385,7 @@ export default function Debts() {
                   value={monthlyPayment}
                   onChange={(e) => setMonthlyPayment(e.target.value)}
                   placeholder="e.g., 100"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.payment && <p className="text-accent text-sm mt-1">{errors.payment}</p>}
@@ -400,26 +400,30 @@ export default function Debts() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any notes about this debt..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 rows={3}
               />
             </div>
 
             <div className="flex gap-4">
-              <button
+              <Button
                 type="submit"
-                className="flex-1 bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
+                variant="primary"
+                size="md"
+                fullWidth
               >
                 {editingDebtId ? 'Update Debt' : 'Add Debt'}
-              </button>
+              </Button>
               {editingDebtId && (
-                <button
+                <Button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+                  variant="gray"
+                  size="md"
+                  fullWidth
                 >
                   Cancel
-                </button>
+                </Button>
               )}
             </div>
           </form>
@@ -473,7 +477,7 @@ export default function Debts() {
         <>
           {/* Repayment Strategy Selector */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">Payoff Strategy</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-secondary-900">Payoff Strategy</h2>
             <div className="flex gap-4 mb-6">
               <button
                 onClick={() => setSelectedStrategy('avalanche')}
@@ -550,7 +554,7 @@ export default function Debts() {
 
           {/* Debt List with Strategy Order */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Your Debts</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-secondary-900">Your Debts</h2>
             <div className="space-y-4">
               {currentStrategy?.debts.map((debt, index) => {
                 const typeInfo = getDebtTypeInfo(debt.type);
@@ -588,18 +592,20 @@ export default function Debts() {
                       <div className="text-right">
                         <p className="text-sm text-gray-600 mb-2">Priority #{debt.order}</p>
                         <div className="flex gap-2">
-                          <button
+                          <Button
                             onClick={() => handleEditDebt(debt)}
-                            className="text-primary hover:text-green-700 text-sm font-semibold"
+                            variant="blue"
+                            size="sm"
                           >
                             Edit
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleDeleteDebt(debt.id)}
-                            className="text-accent hover:text-red-600 text-sm font-semibold"
+                            variant="accent"
+                            size="sm"
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -647,29 +653,35 @@ export default function Debts() {
                     )}
 
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick={() => handleMakePayment(debt.id, 50)}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                        variant="gray"
+                        size="sm"
+                        fullWidth
                       >
                         +€50
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleMakePayment(debt.id, 100)}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                        variant="gray"
+                        size="sm"
+                        fullWidth
                       >
                         +€100
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => {
                           const amount = prompt('Enter payment amount (€):');
                           if (amount && !isNaN(parseFloat(amount))) {
                             handleMakePayment(debt.id, parseFloat(amount));
                           }
                         }}
-                        className="flex-1 bg-primary text-white py-2 rounded-md hover:bg-green-600 transition-colors text-sm font-semibold"
+                        variant="primary"
+                        size="sm"
+                        fullWidth
                       >
-                        Custom Payment
-                      </button>
+                        Custom
+                      </Button>
                     </div>
                   </div>
                 );
@@ -682,7 +694,7 @@ export default function Debts() {
             (restructuringAdvice.consolidationSuggestion ||
               restructuringAdvice.refinancingSuggestion) && (
               <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900">💡 Restructuring Options</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-secondary-900">💡 Restructuring Options</h2>
 
                 {restructuringAdvice.reasons.length > 0 && (
                   <div className="bg-yellow-50 p-4 rounded-md mb-4">

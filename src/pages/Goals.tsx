@@ -220,7 +220,7 @@ export default function Goals() {
       {/* Add/Edit Goal Form */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-secondary-900">
             {editingGoalId ? 'Edit Goal' : 'Create New Goal'}
           </h2>
           <form onSubmit={handleSubmitGoal}>
@@ -233,7 +233,7 @@ export default function Goals() {
                 value={goalName}
                 onChange={(e) => setGoalName(e.target.value)}
                 placeholder="e.g., Emergency Fund, New Laptop, Vacation"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 required
               />
               {errors.name && <p className="text-accent text-sm mt-1">{errors.name}</p>}
@@ -249,7 +249,7 @@ export default function Goals() {
                   value={targetAmount}
                   onChange={(e) => setTargetAmount(e.target.value)}
                   placeholder="e.g., 5000"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.target && <p className="text-accent text-sm mt-1">{errors.target}</p>}
@@ -264,7 +264,7 @@ export default function Goals() {
                   value={currentAmount}
                   onChange={(e) => setCurrentAmount(e.target.value)}
                   placeholder="e.g., 500"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 />
                 {errors.current && <p className="text-accent text-sm mt-1">{errors.current}</p>}
               </div>
@@ -278,25 +278,29 @@ export default function Goals() {
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               />
             </div>
 
             <div className="flex gap-4">
-              <button
+              <Button
                 type="submit"
-                className="flex-1 bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
+                variant="primary"
+                size="md"
+                fullWidth
               >
                 {editingGoalId ? 'Update Goal' : 'Create Goal'}
-              </button>
+              </Button>
               {editingGoalId && (
-                <button
+                <Button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+                  variant="gray"
+                  size="md"
+                  fullWidth
                 >
                   Cancel
-                </button>
+                </Button>
               )}
             </div>
           </form>
@@ -326,7 +330,7 @@ export default function Goals() {
               <div key={goal.id} className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">{goal.name}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-secondary-900">{goal.name}</h3>
                     {goal.dueDate && (
                       <p className="text-sm text-gray-600 mt-1">
                         Target: {new Date(goal.dueDate).toLocaleDateString('lv-LV')}
@@ -334,18 +338,20 @@ export default function Goals() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => handleEditGoal(goal)}
-                      className="text-primary hover:text-green-700 text-sm font-semibold"
+                      variant="blue"
+                      size="sm"
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => handleDeleteGoal(goal.id)}
-                      className="text-accent hover:text-red-600 text-sm font-semibold"
+                      variant="accent"
+                      size="sm"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -405,29 +411,35 @@ export default function Goals() {
 
                 {!isComplete && (
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => handleAddToGoal(goal.id, 50)}
-                      className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                      variant="gray"
+                      size="sm"
+                      fullWidth
                     >
                       +€50
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => handleAddToGoal(goal.id, 100)}
-                      className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                      variant="gray"
+                      size="sm"
+                      fullWidth
                     >
                       +€100
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => {
                         const amount = prompt('Enter amount to add (€):');
                         if (amount && !isNaN(parseFloat(amount))) {
                           handleAddToGoal(goal.id, parseFloat(amount));
                         }
                       }}
-                      className="flex-1 bg-primary text-white py-2 rounded-md hover:bg-green-600 transition-colors text-sm font-semibold"
+                      variant="primary"
+                      size="sm"
+                      fullWidth
                     >
-                      Custom Amount
-                    </button>
+                      Custom
+                    </Button>
                   </div>
                 )}
               </div>

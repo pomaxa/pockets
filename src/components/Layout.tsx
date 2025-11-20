@@ -1,17 +1,20 @@
+import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import SkipLink from './SkipLink';
+import MobileMenu from './MobileMenu';
 
 export default function Layout() {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
   const navLinkClass = (path: string) =>
-    `px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+    `px-4 py-2 rounded-md transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
       isActive(path)
-        ? 'bg-primary text-white'
+        ? 'bg-[#10b981] text-white'
         : 'text-gray-700 hover:bg-gray-100'
     }`;
 
@@ -28,7 +31,7 @@ export default function Layout() {
               className="flex items-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md"
               aria-label="Pockets home"
             >
-              <span className="text-2xl font-bold text-primary">Pockets</span>
+              <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" />
             </Link>
             <nav className="hidden md:flex space-x-2" aria-label="Main navigation">
               <Link
@@ -67,57 +70,23 @@ export default function Layout() {
                 Info
               </Link>
             </nav>
-            {/* Mobile menu button - simplified */}
-            <div className="md:hidden">
-              <Link to="/" className="text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md">
-                Menu
-              </Link>
-            </div>
+            {/* Hamburger Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden p-2 rounded-md text-secondary-600 hover:bg-secondary-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+              aria-label="Open menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Navigation */}
-      <nav
-        className="md:hidden bg-white border-b border-gray-200 px-4 py-2 flex space-x-2 overflow-x-auto"
-        aria-label="Mobile navigation"
-      >
-        <Link
-          to="/app/calculator"
-          className={navLinkClass('/app/calculator')}
-          aria-current={isActive('/app/calculator') ? 'page' : undefined}
-        >
-          Calculator
-        </Link>
-        <Link
-          to="/app/goals"
-          className={navLinkClass('/app/goals')}
-          aria-current={isActive('/app/goals') ? 'page' : undefined}
-        >
-          Goals
-        </Link>
-        <Link
-          to="/app/expenses"
-          className={navLinkClass('/app/expenses')}
-          aria-current={isActive('/app/expenses') ? 'page' : undefined}
-        >
-          Expenses
-        </Link>
-        <Link
-          to="/app/debts"
-          className={navLinkClass('/app/debts')}
-          aria-current={isActive('/app/debts') ? 'page' : undefined}
-        >
-          Debts
-        </Link>
-        <Link
-          to="/app/info"
-          className={navLinkClass('/app/info')}
-          aria-current={isActive('/app/info') ? 'page' : undefined}
-        >
-          Info
-        </Link>
-      </nav>
+      {/* Mobile Menu Component */}
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
       {/* Main Content */}
       <main

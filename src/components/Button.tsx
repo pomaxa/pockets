@@ -19,20 +19,20 @@ export default function Button({
   'aria-label': ariaLabel,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'rounded-md font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseClasses = 'rounded-md font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   const variantClasses = {
-    primary: 'bg-primary text-white hover:bg-green-600 focus:ring-primary disabled:bg-gray-300',
-    secondary: 'bg-secondary text-white hover:bg-gray-600 focus:ring-secondary disabled:bg-gray-300',
-    accent: 'bg-accent text-white hover:bg-red-600 focus:ring-accent disabled:bg-gray-300',
-    blue: 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500 disabled:bg-gray-300',
-    gray: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400 disabled:bg-gray-200',
+    primary: 'bg-[#10b981] text-white hover:bg-[#059669] focus:ring-[#10b981] disabled:bg-gray-300 disabled:text-gray-500',
+    secondary: 'bg-[#6b7280] text-white hover:bg-[#4b5563] focus:ring-[#6b7280] disabled:bg-gray-300 disabled:text-gray-500',
+    accent: 'bg-[#ef4444] text-white hover:bg-[#dc2626] focus:ring-[#ef4444] disabled:bg-gray-300 disabled:text-gray-500',
+    blue: 'bg-[#3b82f6] text-white hover:bg-[#2563eb] focus:ring-[#3b82f6] disabled:bg-gray-300 disabled:text-gray-500',
+    gray: 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-400 disabled:bg-gray-200 disabled:text-gray-400',
   };
 
   const sizeClasses = {
-    sm: 'px-4 py-1 text-sm',
-    md: 'px-6 py-2',
-    lg: 'px-8 py-3 text-lg',
+    sm: 'px-4 py-2.5 text-sm', // 44px min height for touch targets
+    md: 'px-6 py-3', // Better touch target
+    lg: 'px-8 py-3.5 text-lg', // Larger for primary CTAs
   };
 
   const disabledClasses = disabled || loading

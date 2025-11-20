@@ -12,6 +12,7 @@ import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import StatCard from '../components/StatCard';
 import Button from '../components/Button';
+import ExpenseTrendChart from '../components/ExpenseTrendChart';
 
 export default function Expenses() {
   const { getExpenses, addExpense, updateExpense, deleteExpense } = useLocalStorage();
@@ -307,12 +308,9 @@ export default function Expenses() {
                 Export CSV
               </Button>
             )}
-            <label
-              htmlFor="csv-upload"
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-semibold cursor-pointer inline-block"
-            >
+            <Button variant="blue" onClick={() => fileInputRef.current?.click()}>
               Import Revolut CSV
-            </label>
+            </Button>
             <Button
               onClick={() => {
                 if (showForm) {
@@ -339,7 +337,7 @@ export default function Expenses() {
       {/* Add/Edit Expense Form */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-secondary-900">
             {editingExpenseId ? 'Edit Expense' : 'Add New Expense'}
           </h2>
           <form onSubmit={handleSubmitExpense}>
@@ -354,7 +352,7 @@ export default function Expenses() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="e.g., 25.50"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                   required
                 />
                 {errors.amount && <p className="text-accent text-sm mt-1">{errors.amount}</p>}
@@ -367,7 +365,7 @@ export default function Expenses() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as Expense['category'])}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 >
                   {EXPENSE_CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>
@@ -386,7 +384,7 @@ export default function Expenses() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 required
               />
             </div>
@@ -400,25 +398,29 @@ export default function Expenses() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g., Grocery shopping at Rimi"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               />
             </div>
 
             <div className="flex gap-4">
-              <button
+              <Button
                 type="submit"
-                className="flex-1 bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
+                variant="primary"
+                size="md"
+                fullWidth
               >
                 {editingExpenseId ? 'Update Expense' : 'Add Expense'}
-              </button>
+              </Button>
               {editingExpenseId && (
-                <button
+                <Button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+                  variant="gray"
+                  size="md"
+                  fullWidth
                 >
                   Cancel
-                </button>
+                </Button>
               )}
             </div>
           </form>
@@ -451,7 +453,7 @@ export default function Expenses() {
       {/* Category Breakdown */}
       {filteredExpenses.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-6 text-gray-900">Spending by Category</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-secondary-900">Spending by Category</h2>
           <div className="space-y-4">
             {Object.entries(expensesByCategory)
               .sort(([, a], [, b]) => b - a)
@@ -479,6 +481,16 @@ export default function Expenses() {
               })}
           </div>
         </div>
+      )}
+
+      {/* Trend Chart */}
+      {filteredExpenses.length > 0 && (
+        <ExpenseTrendChart
+          data={filteredExpenses.map(exp => ({
+            date: exp.date,
+            amount: exp.amount,
+          }))}
+        />
       )}
 
       {/* Month Filter */}
@@ -514,18 +526,20 @@ export default function Expenses() {
             </div>
 
             <div className="p-6 flex gap-3 border-b border-gray-200">
-              <button
+              <Button
                 onClick={selectAllImports}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                variant="gray"
+                size="sm"
               >
                 Select All
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={deselectAllImports}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-semibold"
+                variant="gray"
+                size="sm"
               >
                 Deselect All
-              </button>
+              </Button>
               <div className="ml-auto text-sm text-gray-600 flex items-center">
                 {selectedImports.size} of {importedExpenses.length} selected
               </div>
@@ -586,19 +600,23 @@ export default function Expenses() {
             </div>
 
             <div className="p-6 border-t border-gray-200 flex gap-3">
-              <button
+              <Button
                 onClick={handleImportCancel}
-                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors font-semibold"
+                variant="gray"
+                size="md"
+                fullWidth
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleImportConfirm}
                 disabled={selectedImports.size === 0}
-                className="flex-1 px-6 py-3 bg-primary text-white rounded-md hover:bg-green-600 transition-colors font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
+                variant="primary"
+                size="md"
+                fullWidth
               >
                 Import {selectedImports.size} Expenses
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -623,7 +641,53 @@ export default function Expenses() {
           }
         />
       ) : (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4 mb-8">
+            {sortedExpenses.map((expense) => {
+              const categoryInfo = EXPENSE_CATEGORIES.find((c) => c.value === expense.category);
+              return (
+                <div key={expense.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{categoryInfo?.emoji}</span>
+                      <div>
+                        <p className="font-semibold text-gray-900">{expense.category}</p>
+                        <p className="text-sm text-gray-600">{formatDateShort(expense.date)}</p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-mono font-bold text-gray-900">
+                      {formatCurrency(expense.amount)}
+                    </p>
+                  </div>
+                  {expense.description && (
+                    <p className="text-sm text-gray-600 mb-3">{expense.description}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleEditExpense(expense)}
+                      variant="blue"
+                      size="sm"
+                      fullWidth
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteExpense(expense.id)}
+                      variant="accent"
+                      size="sm"
+                      fullWidth
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -703,19 +767,21 @@ export default function Expenses() {
                         {formatCurrency(expense.amount)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <div className="flex justify-end gap-3">
-                          <button
+                        <div className="flex justify-end gap-2">
+                          <Button
                             onClick={() => handleEditExpense(expense)}
-                            className="text-primary hover:text-green-700 font-semibold"
+                            variant="blue"
+                            size="sm"
                           >
                             Edit
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleDeleteExpense(expense.id)}
-                            className="text-accent hover:text-red-600 font-semibold"
+                            variant="accent"
+                            size="sm"
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>
@@ -724,7 +790,8 @@ export default function Expenses() {
               </tbody>
             </table>
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

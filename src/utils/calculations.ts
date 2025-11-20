@@ -18,25 +18,26 @@ export const calculateTaxes = (salary: number): number => {
 
 /**
  * Calculate all pockets (mandatory, remaining, recommended savings, etc.)
- * Based on Latvian tax system and user's housing costs
+ * Salary is expected to be net income (after tax)
  */
 export const calculatePockets = (
-  salary: number,
+  netSalary: number,
   housing: number,
   utilities: number,
   emergencyFundMonths: number = 3
 ): PocketCalculation => {
   const mandatory = calculateMandatory(housing, utilities);
-  const taxes = calculateTaxes(salary);
-  const netIncome = salary - taxes;
-  const totalMandatory = mandatory;
-  const remaining = netIncome - totalMandatory;
+  const remaining = netSalary - mandatory;
+
+  // Calculate gross salary for reference (reverse of net)
+  const estimatedGrossSalary = netSalary / 0.8; // Assumes ~20% tax
+  const estimatedTaxes = estimatedGrossSalary - netSalary;
 
   return {
-    grossSalary: salary,
+    grossSalary: estimatedGrossSalary,
     mandatoryExpenses: mandatory,
-    estimatedTaxes: taxes,
-    netIncome,
+    estimatedTaxes: estimatedTaxes,
+    netIncome: netSalary,
     remaining: remaining > 0 ? remaining : 0,
     recommendedSavings: remaining > 0 ? remaining * 0.5 : 0,
     recommendedLifestyle: remaining > 0 ? remaining * 0.5 : 0,
