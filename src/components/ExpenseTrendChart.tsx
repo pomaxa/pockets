@@ -61,7 +61,7 @@ export default function ExpenseTrendChart({ data }: ExpenseTrendChartProps) {
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="#6b7280"
-            tickFormatter={(value) => `€${value}`}
+            tickFormatter={(value: number) => `€${value}`}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
