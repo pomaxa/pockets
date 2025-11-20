@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { Expense } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { formatCurrency, formatDateShort } from '../utils/formatters';
@@ -6,6 +7,11 @@ import { calculateMonthlyExpenses, calculateExpensesByCategory, calculateDailyAv
 import { validateCost } from '../utils/validators';
 import { EXPENSE_CATEGORIES } from '../utils/latvian-constants';
 import { parseCSVFile } from '../utils/csv-parser';
+import { exportExpensesAsCSV, downloadCSVFile } from '../utils/dataExport';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
+import StatCard from '../components/StatCard';
+import Button from '../components/Button';
 
 export default function Expenses() {
   const { getExpenses, addExpense, updateExpense, deleteExpense } = useLocalStorage();
@@ -75,6 +81,7 @@ export default function Expenses() {
         date,
         description: description || undefined,
       });
+      toast.success('Expense updated successfully!');
     } else {
       // Create new expense
       const newExpense: Expense = {
@@ -85,6 +92,7 @@ export default function Expenses() {
         description: description || undefined,
       };
       addExpense(newExpense);
+      toast.success('Expense added successfully!');
     }
 
     loadExpenses();
@@ -119,6 +127,7 @@ export default function Expenses() {
     if (confirm('Are you sure you want to delete this expense?')) {
       deleteExpense(expenseId);
       loadExpenses();
+      toast.success('Expense deleted successfully');
     }
   };
 
@@ -171,6 +180,7 @@ export default function Expenses() {
     setShowImportPreview(false);
     setImportedExpenses([]);
     setSelectedImports(new Set());
+    toast.success(`Imported ${expensesToImport.length} expenses successfully!`);
   };
 
   const handleImportCancel = () => {
@@ -260,42 +270,63 @@ export default function Expenses() {
   // Get unique months from expenses
   const availableMonths = Array.from(new Set(expenses.map((exp) => exp.date.slice(0, 7)))).sort().reverse();
 
+  const handleExportExpenses = () => {
+    if (expenses.length === 0) {
+      toast.error('No expenses to export');
+      return;
+    }
+
+    try {
+      const csvData = exportExpensesAsCSV(expenses);
+      const filename = `expenses-export-${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSVFile(csvData, filename);
+      toast.success(`Exported ${expenses.length} expenses to CSV`);
+    } catch (error) {
+      toast.error('Failed to export expenses');
+      console.error('Export error:', error);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2 text-gray-900">Expense Tracker</h1>
-          <p className="text-gray-600">Track where your money goes</p>
-        </div>
-        <div className="flex gap-3">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="hidden"
-            id="csv-upload"
-          />
-          <label
-            htmlFor="csv-upload"
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-semibold cursor-pointer"
-          >
-            Import Revolut CSV
-          </label>
-          <button
-            onClick={() => {
-              if (showForm) {
-                handleCancelEdit();
-              } else {
-                setShowForm(true);
-              }
-            }}
-            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-          >
-            {showForm ? 'Cancel' : 'Add Expense'}
-          </button>
-        </div>
-      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        onChange={handleFileUpload}
+        className="hidden"
+        id="csv-upload"
+      />
+      <PageHeader
+        title="Expense Tracker"
+        description="Track where your money goes"
+        actions={
+          <>
+            {expenses.length > 0 && (
+              <Button variant="blue" onClick={handleExportExpenses}>
+                Export CSV
+              </Button>
+            )}
+            <label
+              htmlFor="csv-upload"
+              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors font-semibold cursor-pointer inline-block"
+            >
+              Import Revolut CSV
+            </label>
+            <Button
+              onClick={() => {
+                if (showForm) {
+                  handleCancelEdit();
+                } else {
+                  setShowForm(true);
+                }
+              }}
+            >
+              {showForm ? 'Cancel' : 'Add Expense'}
+            </Button>
+          </>
+        }
+      />
 
       {/* Import Error Message */}
       {importError && (
@@ -397,21 +428,23 @@ export default function Expenses() {
       {/* Summary Cards */}
       {expenses.length > 0 && (
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Month Total</p>
-            <p className="text-3xl font-bold text-gray-900">{formatCurrency(monthTotal)}</p>
-            <p className="text-sm text-gray-500 mt-2">{filterMonth}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Daily Average</p>
-            <p className="text-3xl font-bold text-blue-600">{formatCurrency(dailyAverage)}</p>
-            <p className="text-sm text-gray-500 mt-2">This month</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Total Expenses</p>
-            <p className="text-3xl font-bold text-primary">{expenses.length}</p>
-            <p className="text-sm text-gray-500 mt-2">All time</p>
-          </div>
+          <StatCard
+            label="Month Total"
+            value={formatCurrency(monthTotal)}
+            sublabel={filterMonth}
+          />
+          <StatCard
+            label="Daily Average"
+            value={formatCurrency(dailyAverage)}
+            sublabel="This month"
+            variant="blue"
+          />
+          <StatCard
+            label="Total Expenses"
+            value={expenses.length.toString()}
+            sublabel="All time"
+            variant="primary"
+          />
         </div>
       )}
 
@@ -573,25 +606,22 @@ export default function Expenses() {
 
       {/* Expenses List */}
       {sortedExpenses.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <div className="text-6xl mb-4">📊</div>
-          <h3 className="text-xl font-bold mb-2 text-gray-900">
-            {expenses.length === 0 ? 'No Expenses Yet' : 'No Expenses This Month'}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {expenses.length === 0
+        <EmptyState
+          icon="📊"
+          title={expenses.length === 0 ? 'No Expenses Yet' : 'No Expenses This Month'}
+          description={
+            expenses.length === 0
               ? 'Start tracking your spending by adding your first expense.'
-              : 'No expenses recorded for this month. Try selecting a different month.'}
-          </p>
-          {expenses.length === 0 && (
-            <button
-              onClick={() => setShowForm(true)}
-              className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-            >
-              Add Your First Expense
-            </button>
-          )}
-        </div>
+              : 'No expenses recorded for this month. Try selecting a different month.'
+          }
+          action={
+            expenses.length === 0 ? (
+              <Button onClick={() => setShowForm(true)}>
+                Add Your First Expense
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">

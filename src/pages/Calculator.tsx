@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { UserProfile, PocketCalculation } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { calculatePockets } from '../utils/calculations';
@@ -142,6 +143,7 @@ export default function Calculator() {
       createdAt: new Date().toISOString(),
     };
     saveProfile(profile);
+    toast.success('Profile saved successfully!');
 
     // Clear draft since we've now saved the complete profile
     localStorage.removeItem('pockets_calculator_draft');

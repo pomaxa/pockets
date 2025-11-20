@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Goal, UserProfile } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { formatCurrency } from '../utils/formatters';
 import { calculateMonthsToGoal, calculatePockets } from '../utils/calculations';
 import { validateRequired, validateCost } from '../utils/validators';
+import { exportGoalsAsCSV, downloadCSVFile } from '../utils/dataExport';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
+import Button from '../components/Button';
 
 export default function Goals() {
   const { getGoals, addGoal, deleteGoal, updateGoal, getProfile } = useLocalStorage();
@@ -66,6 +71,7 @@ export default function Goals() {
         currentAmount: parseFloat(currentAmount),
         dueDate: dueDate || undefined,
       });
+      toast.success('Goal updated successfully!');
     } else {
       // Create new goal
       const newGoal: Goal = {
@@ -77,6 +83,7 @@ export default function Goals() {
         dueDate: dueDate || undefined,
       };
       addGoal(newGoal);
+      toast.success('Goal created successfully!');
     }
 
     loadGoals();
@@ -111,6 +118,7 @@ export default function Goals() {
     if (confirm('Are you sure you want to delete this goal?')) {
       deleteGoal(goalId);
       loadGoals();
+      toast.success('Goal deleted successfully');
     }
   };
 
@@ -120,6 +128,7 @@ export default function Goals() {
       const newCurrentAmount = goal.currentAmount + amount;
       updateGoal(goalId, { currentAmount: newCurrentAmount });
       loadGoals();
+      toast.success(`Added ${formatCurrency(amount)} to goal!`);
     }
   };
 
@@ -164,26 +173,49 @@ export default function Goals() {
     return `~${yearText} and ${monthText}`;
   };
 
+  const handleExportGoals = () => {
+    if (goals.length === 0) {
+      toast.error('No goals to export');
+      return;
+    }
+
+    try {
+      const csvData = exportGoalsAsCSV(goals);
+      const filename = `goals-export-${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSVFile(csvData, filename);
+      toast.success(`Exported ${goals.length} goals to CSV`);
+    } catch (error) {
+      toast.error('Failed to export goals');
+      console.error('Export error:', error);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2 text-gray-900">Savings Goals</h1>
-          <p className="text-gray-600">Track your progress toward financial goals</p>
-        </div>
-        <button
-          onClick={() => {
-            if (showForm) {
-              handleCancelEdit();
-            } else {
-              setShowForm(true);
-            }
-          }}
-          className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-        >
-          {showForm ? 'Cancel' : 'Add Goal'}
-        </button>
-      </div>
+      <PageHeader
+        title="Savings Goals"
+        description="Track your progress toward financial goals"
+        actions={
+          <>
+            {goals.length > 0 && (
+              <Button variant="blue" onClick={handleExportGoals}>
+                Export CSV
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                if (showForm) {
+                  handleCancelEdit();
+                } else {
+                  setShowForm(true);
+                }
+              }}
+            >
+              {showForm ? 'Cancel' : 'Add Goal'}
+            </Button>
+          </>
+        }
+      />
 
       {/* Add/Edit Goal Form */}
       {showForm && (
@@ -273,19 +305,16 @@ export default function Goals() {
 
       {/* Goals List */}
       {goals.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <div className="text-6xl mb-4">🎯</div>
-          <h3 className="text-xl font-bold mb-2 text-gray-900">No Goals Yet</h3>
-          <p className="text-gray-600 mb-6">
-            Start by creating your first savings goal. It could be an emergency fund, a vacation, or anything you're saving for.
-          </p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-          >
-            Create Your First Goal
-          </button>
-        </div>
+        <EmptyState
+          icon="🎯"
+          title="No Goals Yet"
+          description="Start by creating your first savings goal. It could be an emergency fund, a vacation, or anything you're saving for."
+          action={
+            <Button onClick={() => setShowForm(true)}>
+              Create Your First Goal
+            </Button>
+          }
+        />
       ) : (
         <div className="space-y-6">
           {goals.map((goal) => {

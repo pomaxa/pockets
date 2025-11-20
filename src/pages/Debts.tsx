@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Debt, UserProfile } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { formatCurrency } from '../utils/formatters';
@@ -11,6 +12,11 @@ import {
   calculateDebtToIncomeRatio,
   getDebtRestructuringAdvice,
 } from '../utils/debt-calculations';
+import { exportDebtsAsCSV, downloadCSVFile } from '../utils/dataExport';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
+import StatCard from '../components/StatCard';
+import Button from '../components/Button';
 
 export default function Debts() {
   const {
@@ -116,6 +122,7 @@ export default function Debts() {
         monthlyPayment: parseFloat(monthlyPayment),
         notes: notes || undefined,
       });
+      toast.success('Debt updated successfully!');
     } else {
       // Create new debt
       const newDebt: Debt = {
@@ -131,6 +138,7 @@ export default function Debts() {
         createdAt: new Date().toISOString(),
       };
       addDebt(newDebt);
+      toast.success('Debt added successfully!');
     }
 
     loadDebts();
@@ -173,6 +181,7 @@ export default function Debts() {
     if (confirm('Are you sure you want to delete this debt?')) {
       deleteDebt(debtId);
       loadDebts();
+      toast.success('Debt deleted successfully');
     }
   };
 
@@ -182,6 +191,7 @@ export default function Debts() {
       const newBalance = Math.max(0, debt.currentBalance - amount);
       updateDebt(debtId, { currentBalance: newBalance });
       loadDebts();
+      toast.success(`Payment of ${formatCurrency(amount)} recorded!`);
     }
   };
 
@@ -211,26 +221,49 @@ export default function Debts() {
     return DEBT_TYPES.find((t) => t.value === type);
   };
 
+  const handleExportDebts = () => {
+    if (debts.length === 0) {
+      toast.error('No debts to export');
+      return;
+    }
+
+    try {
+      const csvData = exportDebtsAsCSV(debts);
+      const filename = `debts-export-${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSVFile(csvData, filename);
+      toast.success(`Exported ${debts.length} debts to CSV`);
+    } catch (error) {
+      toast.error('Failed to export debts');
+      console.error('Export error:', error);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2 text-gray-900">Debt Management</h1>
-          <p className="text-gray-600">Track debts and create a payoff strategy</p>
-        </div>
-        <button
-          onClick={() => {
-            if (showForm) {
-              handleCancelEdit();
-            } else {
-              setShowForm(true);
-            }
-          }}
-          className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-        >
-          {showForm ? 'Cancel' : 'Add Debt'}
-        </button>
-      </div>
+      <PageHeader
+        title="Debt Management"
+        description="Track debts and create a payoff strategy"
+        actions={
+          <>
+            {debts.length > 0 && (
+              <Button variant="blue" onClick={handleExportDebts}>
+                Export CSV
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                if (showForm) {
+                  handleCancelEdit();
+                } else {
+                  setShowForm(true);
+                }
+              }}
+            >
+              {showForm ? 'Cancel' : 'Add Debt'}
+            </Button>
+          </>
+        }
+      />
 
       {/* Add/Edit Debt Form */}
       {showForm && (
@@ -396,53 +429,46 @@ export default function Debts() {
       {/* Summary Dashboard */}
       {debts.length > 0 && (
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Total Debt</p>
-            <p className="text-3xl font-bold text-accent">{formatCurrency(totalDebtAmount)}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Monthly Payments</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {formatCurrency(totalMonthlyPayments)}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Avg Interest Rate</p>
-            <p className="text-3xl font-bold text-orange-600">{weightedAvgRate.toFixed(1)}%</p>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-sm text-gray-600 mb-1">Debt-to-Income</p>
-            <p
-              className={`text-3xl font-bold ${
-                debtToIncomeRatio > 43
-                  ? 'text-accent'
-                  : debtToIncomeRatio > 36
-                  ? 'text-orange-600'
-                  : 'text-primary'
-              }`}
-            >
-              {debtToIncomeRatio.toFixed(1)}%
-            </p>
-          </div>
+          <StatCard
+            label="Total Debt"
+            value={formatCurrency(totalDebtAmount)}
+            variant="accent"
+          />
+          <StatCard
+            label="Monthly Payments"
+            value={formatCurrency(totalMonthlyPayments)}
+          />
+          <StatCard
+            label="Avg Interest Rate"
+            value={`${weightedAvgRate.toFixed(1)}%`}
+            variant="orange"
+          />
+          <StatCard
+            label="Debt-to-Income"
+            value={`${debtToIncomeRatio.toFixed(1)}%`}
+            variant={
+              debtToIncomeRatio > 43
+                ? 'accent'
+                : debtToIncomeRatio > 36
+                ? 'orange'
+                : 'primary'
+            }
+          />
         </div>
       )}
 
       {/* No Debts State */}
       {debts.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <div className="text-6xl mb-4">💳</div>
-          <h3 className="text-xl font-bold mb-2 text-gray-900">No Debts Tracked</h3>
-          <p className="text-gray-600 mb-6">
-            Start by adding your debts to create a payoff strategy and track your progress toward
-            becoming debt-free.
-          </p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
-          >
-            Add Your First Debt
-          </button>
-        </div>
+        <EmptyState
+          icon="💳"
+          title="No Debts Tracked"
+          description="Start by adding your debts to create a payoff strategy and track your progress toward becoming debt-free."
+          action={
+            <Button onClick={() => setShowForm(true)}>
+              Add Your First Debt
+            </Button>
+          }
+        />
       ) : (
         <>
           {/* Repayment Strategy Selector */}

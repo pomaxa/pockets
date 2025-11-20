@@ -1,4 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import SkipLink from './SkipLink';
 
 export default function Layout() {
   const location = useLocation();
@@ -8,41 +9,67 @@ export default function Layout() {
   };
 
   const navLinkClass = (path: string) =>
-    `px-4 py-2 rounded-md transition-colors ${
+    `px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
       isActive(path)
         ? 'bg-primary text-white'
         : 'text-gray-700 hover:bg-gray-100'
     }`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <SkipLink />
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm" role="banner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center">
+            <Link
+              to="/"
+              className="flex items-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md"
+              aria-label="Pockets home"
+            >
               <span className="text-2xl font-bold text-primary">Pockets</span>
             </Link>
-            <nav className="hidden md:flex space-x-2">
-              <Link to="/app/calculator" className={navLinkClass('/app/calculator')}>
+            <nav className="hidden md:flex space-x-2" aria-label="Main navigation">
+              <Link
+                to="/app/calculator"
+                className={navLinkClass('/app/calculator')}
+                aria-current={isActive('/app/calculator') ? 'page' : undefined}
+              >
                 Calculator
               </Link>
-              <Link to="/app/goals" className={navLinkClass('/app/goals')}>
+              <Link
+                to="/app/goals"
+                className={navLinkClass('/app/goals')}
+                aria-current={isActive('/app/goals') ? 'page' : undefined}
+              >
                 Goals
               </Link>
-              <Link to="/app/expenses" className={navLinkClass('/app/expenses')}>
+              <Link
+                to="/app/expenses"
+                className={navLinkClass('/app/expenses')}
+                aria-current={isActive('/app/expenses') ? 'page' : undefined}
+              >
                 Expenses
               </Link>
-              <Link to="/app/debts" className={navLinkClass('/app/debts')}>
+              <Link
+                to="/app/debts"
+                className={navLinkClass('/app/debts')}
+                aria-current={isActive('/app/debts') ? 'page' : undefined}
+              >
                 Debts
               </Link>
-              <Link to="/app/info" className={navLinkClass('/app/info')}>
+              <Link
+                to="/app/info"
+                className={navLinkClass('/app/info')}
+                aria-current={isActive('/app/info') ? 'page' : undefined}
+              >
                 Info
               </Link>
             </nav>
             {/* Mobile menu button - simplified */}
             <div className="md:hidden">
-              <Link to="/" className="text-sm text-gray-600">
+              <Link to="/" className="text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md">
                 Menu
               </Link>
             </div>
@@ -51,26 +78,53 @@ export default function Layout() {
       </header>
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden bg-white border-b border-gray-200 px-4 py-2 flex space-x-2 overflow-x-auto">
-        <Link to="/app/calculator" className={navLinkClass('/app/calculator')}>
+      <nav
+        className="md:hidden bg-white border-b border-gray-200 px-4 py-2 flex space-x-2 overflow-x-auto"
+        aria-label="Mobile navigation"
+      >
+        <Link
+          to="/app/calculator"
+          className={navLinkClass('/app/calculator')}
+          aria-current={isActive('/app/calculator') ? 'page' : undefined}
+        >
           Calculator
         </Link>
-        <Link to="/app/goals" className={navLinkClass('/app/goals')}>
+        <Link
+          to="/app/goals"
+          className={navLinkClass('/app/goals')}
+          aria-current={isActive('/app/goals') ? 'page' : undefined}
+        >
           Goals
         </Link>
-        <Link to="/app/expenses" className={navLinkClass('/app/expenses')}>
+        <Link
+          to="/app/expenses"
+          className={navLinkClass('/app/expenses')}
+          aria-current={isActive('/app/expenses') ? 'page' : undefined}
+        >
           Expenses
         </Link>
-        <Link to="/app/debts" className={navLinkClass('/app/debts')}>
+        <Link
+          to="/app/debts"
+          className={navLinkClass('/app/debts')}
+          aria-current={isActive('/app/debts') ? 'page' : undefined}
+        >
           Debts
         </Link>
-        <Link to="/app/info" className={navLinkClass('/app/info')}>
+        <Link
+          to="/app/info"
+          className={navLinkClass('/app/info')}
+          aria-current={isActive('/app/info') ? 'page' : undefined}
+        >
           Info
         </Link>
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main
+        id="main-content"
+        className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full"
+        role="main"
+      >
         <Outlet />
       </main>
 
