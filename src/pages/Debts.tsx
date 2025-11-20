@@ -25,6 +25,7 @@ export default function Debts() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState<'avalanche' | 'snowball'>('avalanche');
+  const [editingDebtId, setEditingDebtId] = useState<string | null>(null);
 
   // Form state
   const [debtName, setDebtName] = useState('');
@@ -96,30 +97,61 @@ export default function Debts() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddDebt = (e: React.FormEvent) => {
+  const handleSubmitDebt = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {
       return;
     }
 
-    const newDebt: Debt = {
-      id: Date.now().toString(),
-      name: debtName,
-      type: debtType,
-      totalAmount: parseFloat(totalAmount),
-      currentBalance: parseFloat(currentBalance),
-      interestRate: parseFloat(interestRate),
-      minimumPayment: parseFloat(minimumPayment),
-      monthlyPayment: parseFloat(monthlyPayment),
-      notes: notes || undefined,
-      createdAt: new Date().toISOString(),
-    };
+    if (editingDebtId) {
+      // Update existing debt
+      updateDebt(editingDebtId, {
+        name: debtName,
+        type: debtType,
+        totalAmount: parseFloat(totalAmount),
+        currentBalance: parseFloat(currentBalance),
+        interestRate: parseFloat(interestRate),
+        minimumPayment: parseFloat(minimumPayment),
+        monthlyPayment: parseFloat(monthlyPayment),
+        notes: notes || undefined,
+      });
+    } else {
+      // Create new debt
+      const newDebt: Debt = {
+        id: Date.now().toString(),
+        name: debtName,
+        type: debtType,
+        totalAmount: parseFloat(totalAmount),
+        currentBalance: parseFloat(currentBalance),
+        interestRate: parseFloat(interestRate),
+        minimumPayment: parseFloat(minimumPayment),
+        monthlyPayment: parseFloat(monthlyPayment),
+        notes: notes || undefined,
+        createdAt: new Date().toISOString(),
+      };
+      addDebt(newDebt);
+    }
 
-    addDebt(newDebt);
     loadDebts();
+    resetForm();
+  };
 
-    // Reset form
+  const handleEditDebt = (debt: Debt) => {
+    setDebtName(debt.name);
+    setDebtType(debt.type);
+    setTotalAmount(debt.totalAmount.toString());
+    setCurrentBalance(debt.currentBalance.toString());
+    setInterestRate(debt.interestRate.toString());
+    setMinimumPayment(debt.minimumPayment.toString());
+    setMonthlyPayment(debt.monthlyPayment.toString());
+    setNotes(debt.notes || '');
+    setEditingDebtId(debt.id);
+    setShowForm(true);
+    setErrors({});
+  };
+
+  const resetForm = () => {
     setDebtName('');
     setDebtType('credit_card');
     setTotalAmount('');
@@ -128,8 +160,13 @@ export default function Debts() {
     setMinimumPayment('');
     setMonthlyPayment('');
     setNotes('');
+    setEditingDebtId(null);
     setShowForm(false);
     setErrors({});
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
   };
 
   const handleDeleteDebt = (debtId: string) => {
@@ -182,18 +219,26 @@ export default function Debts() {
           <p className="text-gray-600">Track debts and create a payoff strategy</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) {
+              handleCancelEdit();
+            } else {
+              setShowForm(true);
+            }
+          }}
           className="bg-primary text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors font-semibold"
         >
           {showForm ? 'Cancel' : 'Add Debt'}
         </button>
       </div>
 
-      {/* Add Debt Form */}
+      {/* Add/Edit Debt Form */}
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">Add New Debt</h2>
-          <form onSubmit={handleAddDebt}>
+          <h2 className="text-xl font-bold mb-4 text-gray-900">
+            {editingDebtId ? 'Edit Debt' : 'Add New Debt'}
+          </h2>
+          <form onSubmit={handleSubmitDebt}>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">
@@ -327,12 +372,23 @@ export default function Debts() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
-            >
-              Add Debt
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-primary text-white py-2 rounded-md font-semibold hover:bg-green-600 transition-colors"
+              >
+                {editingDebtId ? 'Update Debt' : 'Add Debt'}
+              </button>
+              {editingDebtId && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         </div>
       )}
@@ -504,13 +560,21 @@ export default function Debts() {
                         <p className="text-sm text-gray-600">{typeInfo?.label}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-gray-600">Priority #{debt.order}</p>
-                        <button
-                          onClick={() => handleDeleteDebt(debt.id)}
-                          className="text-accent hover:text-red-600 text-sm font-semibold mt-1"
-                        >
-                          Delete
-                        </button>
+                        <p className="text-sm text-gray-600 mb-2">Priority #{debt.order}</p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditDebt(debt)}
+                            className="text-primary hover:text-green-700 text-sm font-semibold"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteDebt(debt.id)}
+                            className="text-accent hover:text-red-600 text-sm font-semibold"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
 

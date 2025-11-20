@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { UserProfile, PocketCalculation } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { calculatePockets } from '../utils/calculations';
+import { calculateTotalMonthlyDebtPayments } from '../utils/debt-calculations';
 import { formatCurrency } from '../utils/formatters';
 import { validateSalary, validateCost } from '../utils/validators';
 import { HOUSING_TYPES, EMERGENCY_FUND_MONTHS } from '../utils/latvian-constants';
 
 export default function Calculator() {
-  const { getProfile, saveProfile } = useLocalStorage();
+  const { getProfile, saveProfile, getDebts } = useLocalStorage();
   const navigate = useNavigate();
 
   // Form state
@@ -119,6 +120,10 @@ export default function Calculator() {
     const utilities = parseFloat(utilitiesCost);
     const savings = parseFloat(currentSavings);
 
+    // Calculate total monthly debt payments from debts
+    const debts = getDebts();
+    const monthlyDebtPayments = calculateTotalMonthlyDebtPayments(debts);
+
     // Calculate pockets
     const calc = calculatePockets(salary, housing, utilities, emergencyFundMonths);
     setCalculation(calc);
@@ -130,7 +135,7 @@ export default function Calculator() {
       housingType,
       housingCost: housing,
       utilitiesCost: utilities,
-      monthlyDebtPayments: 0, // TODO: Calculate from debts
+      monthlyDebtPayments,
       currentSavings: savings,
       emergencyFundMonths,
       savingsPercentage: 50,
