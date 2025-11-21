@@ -18,7 +18,8 @@
       "WebFetch(domain:stew-pager-32863001.figma.site)",
       "Bash(npm install:*)",
       "Bash(cat:*)",
-      "WebFetch(domain:spur-create-55554866.figma.site)"
+      "WebFetch(domain:spur-create-55554866.figma.site)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
