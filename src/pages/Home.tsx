@@ -28,7 +28,6 @@ export default function Home() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" />
-              <span className="ml-2 text-2xl font-bold text-primary">Pockets</span>
             </div>
             <Link to="/app/calculator">
               <Button variant="primary">Get Started</Button>
