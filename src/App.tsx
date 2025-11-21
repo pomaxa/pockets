@@ -7,6 +7,8 @@ import Goals from './pages/Goals';
 import Expenses from './pages/Expenses';
 import Debts from './pages/Debts';
 import Info from './pages/Info';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function App() {
   return (
@@ -44,6 +46,12 @@ function App() {
           <Route path="expenses" element={<Expenses />} />
           <Route path="debts" element={<Debts />} />
           <Route path="info" element={<Info />} />
+        </Route>
+        <Route path="/privacy" element={<Layout />}>
+          <Route index element={<Privacy />} />
+        </Route>
+        <Route path="/terms" element={<Layout />}>
+          <Route index element={<Terms />} />
         </Route>
       </Routes>
     </BrowserRouter>

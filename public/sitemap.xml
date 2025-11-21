@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Home Page -->
+  <url>
+    <loc>https://pockets.lv/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Calculator -->
+  <url>
+    <loc>https://pockets.lv/app/calculator</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Goals -->
+  <url>
+    <loc>https://pockets.lv/app/goals</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Expenses -->
+  <url>
+    <loc>https://pockets.lv/app/expenses</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Debts -->
+  <url>
+    <loc>https://pockets.lv/app/debts</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Info -->
+  <url>
+    <loc>https://pockets.lv/app/info</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://pockets.lv/privacy</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://pockets.lv/terms</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

@@ -11,7 +11,7 @@ export default function FeatureCard({ icon, title, description, link }: FeatureC
   const content = (
     <>
       <div className="flex items-center justify-center w-16 h-16 mb-4 bg-primary/10 rounded-lg">
-        <img src={icon} alt="" className="w-8 h-8" />
+        <img src={icon} alt="" aria-hidden="true" className="w-8 h-8" width="32" height="32" />
       </div>
       <h3 className="text-xl font-bold mb-3 text-gray-900">{title}</h3>
       <p className="text-gray-600 leading-relaxed">{description}</p>

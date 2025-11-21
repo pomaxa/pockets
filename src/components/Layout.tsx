@@ -31,7 +31,7 @@ export default function Layout() {
               className="flex items-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md"
               aria-label="Pockets home"
             >
-              <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" />
+              <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" width="32" height="32" />
             </Link>
             <nav className="hidden md:flex space-x-2" aria-label="Main navigation">
               <Link
@@ -101,10 +101,18 @@ export default function Layout() {
       <footer className="bg-white border-t border-gray-200 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-sm text-gray-600">
-            <p>&copy; 2024 Pockets. Financial literacy for Latvia.</p>
-            <p className="mt-2">
+            <p>&copy; 2025 Pockets. Financial literacy for Latvia.</p>
+            <p className="mt-2 space-x-4">
               <Link to="/app/info" className="text-primary hover:underline">
                 Learn more
+              </Link>
+              <span>•</span>
+              <Link to="/privacy" className="text-primary hover:underline">
+                Privacy Policy
+              </Link>
+              <span>•</span>
+              <Link to="/terms" className="text-primary hover:underline">
+                Terms of Service
               </Link>
             </p>
           </div>

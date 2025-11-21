@@ -27,7 +27,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" />
+              <img src="/assets/logo.svg" alt="Pockets" className="h-8 w-auto" width="32" height="32" />
             </div>
             <Link to="/app/calculator">
               <Button variant="primary">Get Started</Button>
@@ -310,7 +310,16 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-secondary-200 text-center text-secondary-600">
-            <p>&copy; 2024 Pockets. Making financial literacy accessible.</p>
+            <p>&copy; 2025 Pockets. Making financial literacy accessible.</p>
+            <p className="mt-2 space-x-4 text-sm">
+              <Link to="/privacy" className="text-primary-600 hover:underline">
+                Privacy Policy
+              </Link>
+              <span>•</span>
+              <Link to="/terms" className="text-primary-600 hover:underline">
+                Terms of Service
+              </Link>
+            </p>
           </div>
         </div>
       </footer>
