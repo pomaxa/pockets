@@ -163,13 +163,73 @@ export default function Home() {
           centered
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <CategoryCard icon="/assets/icon-housing.svg" title="Housing" />
-          <CategoryCard icon="/assets/icon-food.svg" title="Food & Dining" />
-          <CategoryCard icon="/assets/icon-transport.svg" title="Transport" />
-          <CategoryCard icon="/assets/icon-entertainment.svg" title="Entertainment" />
-          <CategoryCard icon="/assets/icon-health.svg" title="Health" />
-          <CategoryCard icon="/assets/icon-utilities.svg" title="Utilities" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <CategoryCard
+            icon="/assets/icon-housing.svg"
+            title="Housing"
+            description="Your main living costs including rent or mortgage payments"
+            examples={[
+              "Monthly rent payment",
+              "Mortgage installment",
+              "Property insurance",
+              "Home maintenance"
+            ]}
+          />
+          <CategoryCard
+            icon="/assets/icon-food.svg"
+            title="Food & Dining"
+            description="All food-related expenses from groceries to eating out"
+            examples={[
+              "Grocery shopping (Rimi, Maxima)",
+              "Restaurants and cafes",
+              "Food delivery (Wolt, Bolt Food)",
+              "Work lunches"
+            ]}
+          />
+          <CategoryCard
+            icon="/assets/icon-transport.svg"
+            title="Transport"
+            description="Getting around - public transport, fuel, and travel"
+            examples={[
+              "Public transport tickets",
+              "Fuel and car maintenance",
+              "Taxi and Bolt rides",
+              "Parking fees"
+            ]}
+          />
+          <CategoryCard
+            icon="/assets/icon-entertainment.svg"
+            title="Entertainment"
+            description="Leisure activities and fun spending"
+            examples={[
+              "Streaming services (Netflix, Spotify)",
+              "Cinema and events",
+              "Hobbies and sports",
+              "Shopping for fun"
+            ]}
+          />
+          <CategoryCard
+            icon="/assets/icon-health.svg"
+            title="Health"
+            description="Medical expenses and wellness"
+            examples={[
+              "Doctor visits and prescriptions",
+              "Pharmacy purchases",
+              "Gym membership",
+              "Health insurance"
+            ]}
+          />
+          <CategoryCard
+            icon="/assets/icon-utilities.svg"
+            title="Utilities"
+            description="Essential home services and bills"
+            examples={[
+              "Electricity and water",
+              "Internet and phone",
+              "Heating",
+              "TV subscription"
+            ]}
+          />
         </div>
       </Section>
 
