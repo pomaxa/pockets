@@ -3,9 +3,11 @@ interface CategoryCardProps {
   title: string;
   description?: string;
   examples?: string[];
+  percentage?: string;
+  amount?: number;
 }
 
-export default function CategoryCard({ icon, title, description, examples }: CategoryCardProps) {
+export default function CategoryCard({ icon, title, description, examples, percentage, amount }: CategoryCardProps) {
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-200 group">
       <div className="flex items-start gap-4 mb-3">
@@ -13,7 +15,19 @@ export default function CategoryCard({ icon, title, description, examples }: Cat
           <img src={icon} alt="" aria-hidden="true" className="w-6 h-6" width="24" height="24" />
         </div>
         <div className="flex-1">
-          <h4 className="font-bold text-gray-900 mb-1">{title}</h4>
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h4 className="font-bold text-gray-900">{title}</h4>
+            {percentage && (
+              <span className="text-sm font-semibold text-primary bg-primary/10 px-2 py-1 rounded flex-shrink-0">
+                {percentage}
+              </span>
+            )}
+          </div>
+          {amount !== undefined && amount > 0 && (
+            <p className="text-lg font-bold text-primary mb-1">
+              €{amount.toFixed(2)}
+            </p>
+          )}
           {description && (
             <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
           )}

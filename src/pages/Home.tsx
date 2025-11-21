@@ -10,6 +10,7 @@ import CategoryCard from '../components/CategoryCard';
 export default function Home() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [netIncome, setNetIncome] = useState<number>(0);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +19,20 @@ export default function Home() {
       setEmail('');
       setTimeout(() => setSubscribed(false), 3000);
     }
+  };
+
+  // Calculate budget amount based on percentage range (e.g., "25-30%" uses midpoint 27.5%)
+  const calculateAmount = (percentageRange: string): number => {
+    if (!netIncome || netIncome <= 0) return 0;
+
+    const match = percentageRange.match(/(\d+)(?:-(\d+))?%/);
+    if (!match) return 0;
+
+    const min = parseInt(match[1]);
+    const max = match[2] ? parseInt(match[2]) : min;
+    const avgPercentage = (min + max) / 2;
+
+    return (netIncome * avgPercentage) / 100;
   };
 
   return (
@@ -163,11 +178,40 @@ export default function Home() {
           centered
         />
 
+        {/* Income Calculator */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="bg-white rounded-lg p-6 shadow-sm border-2 border-primary/20">
+            <label htmlFor="netIncome" className="block text-sm font-semibold text-gray-700 mb-2">
+              Enter Your Monthly Net Income (After Taxes)
+            </label>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold text-gray-700">€</span>
+              <input
+                id="netIncome"
+                type="number"
+                min="0"
+                step="100"
+                value={netIncome || ''}
+                onChange={(e) => setNetIncome(parseFloat(e.target.value) || 0)}
+                placeholder="1500"
+                className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+            {netIncome > 0 && (
+              <p className="mt-3 text-sm text-gray-600">
+                See recommended budget allocations below based on your €{netIncome.toFixed(2)} monthly income
+              </p>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <CategoryCard
             icon="/assets/icon-housing.svg"
             title="Housing"
             description="Your main living costs including rent or mortgage payments"
+            percentage="25-30%"
+            amount={calculateAmount("25-30%")}
             examples={[
               "Monthly rent payment",
               "Mortgage installment",
@@ -179,6 +223,8 @@ export default function Home() {
             icon="/assets/icon-food.svg"
             title="Food & Dining"
             description="All food-related expenses from groceries to eating out"
+            percentage="10-15%"
+            amount={calculateAmount("10-15%")}
             examples={[
               "Grocery shopping (Rimi, Maxima)",
               "Restaurants and cafes",
@@ -190,6 +236,8 @@ export default function Home() {
             icon="/assets/icon-transport.svg"
             title="Transport"
             description="Getting around - public transport, fuel, and travel"
+            percentage="10-15%"
+            amount={calculateAmount("10-15%")}
             examples={[
               "Public transport tickets",
               "Fuel and car maintenance",
@@ -201,6 +249,8 @@ export default function Home() {
             icon="/assets/icon-entertainment.svg"
             title="Entertainment"
             description="Leisure activities and fun spending"
+            percentage="5-10%"
+            amount={calculateAmount("5-10%")}
             examples={[
               "Streaming services (Netflix, Spotify)",
               "Cinema and events",
@@ -212,6 +262,8 @@ export default function Home() {
             icon="/assets/icon-health.svg"
             title="Health"
             description="Medical expenses and wellness"
+            percentage="5-10%"
+            amount={calculateAmount("5-10%")}
             examples={[
               "Doctor visits and prescriptions",
               "Pharmacy purchases",
@@ -223,6 +275,8 @@ export default function Home() {
             icon="/assets/icon-utilities.svg"
             title="Utilities"
             description="Essential home services and bills"
+            percentage="5-10%"
+            amount={calculateAmount("5-10%")}
             examples={[
               "Electricity and water",
               "Internet and phone",
