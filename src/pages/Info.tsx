@@ -68,10 +68,10 @@ export default function Info() {
             <button
               key={section.id}
               onClick={() => setActiveSection(section.id)}
-              className={`px-4 py-2 rounded-md whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-md whitespace-nowrap transition-colors font-medium ${
                 activeSection === section.id
                   ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
               }`}
             >
               {section.title}
