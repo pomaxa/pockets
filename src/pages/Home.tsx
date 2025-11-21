@@ -8,18 +8,7 @@ import FeatureCard from '../components/FeatureCard';
 import CategoryCard from '../components/CategoryCard';
 
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
   const [netIncome, setNetIncome] = useState<number>(0);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
-    }
-  };
 
   // Calculate budget amount based on percentage range (e.g., "25-30%" uses midpoint 27.5%)
   const calculateAmount = (percentageRange: string): number => {
@@ -294,24 +283,24 @@ export default function Home() {
           <p className="text-gray-600 mb-8">
             Get financial tips and updates delivered to your inbox
           </p>
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary flex-1 max-w-md"
-              required
+          <div className="flex justify-center">
+            <iframe
+              src="https://subscribe-forms.beehiiv.com/ac060aae-0f50-48f6-9e48-06229e3a711f"
+              className="beehiiv-embed"
+              data-test-id="beehiiv-embed"
+              frameBorder="0"
+              scrolling="no"
+              style={{
+                width: '560px',
+                height: '315px',
+                margin: 0,
+                borderRadius: '0px',
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+                maxWidth: '100%'
+              }}
             />
-            <Button type="submit" variant="primary">
-              Subscribe
-            </Button>
-          </form>
-          {subscribed && (
-            <p className="mt-4 text-primary font-semibold">
-              Thanks for subscribing! Check your email soon.
-            </p>
-          )}
+          </div>
         </div>
       </Section>
 
