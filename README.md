@@ -4,20 +4,26 @@ A web application designed to help young people in Latvia take control of their 
 
 ## Features
 
-- **Pocket Calculator**: Calculate how much you should save and spend based on your salary and expenses
-- **Goals Tracking**: Set and track financial goals with progress visualization
-- **Expense Tracker**: Log and categorize expenses with monthly breakdowns
-- **Financial Education**: Learn about financial independence, emergency funds, and Latvia's pension system
+- **Budget Calculator**: Research-based budget percentages (50/30/20 rule) with real-time euro calculations based on your income
+- **Pocket Calculator**: Calculate how much you should save and spend based on your salary and expenses with Latvia tax calculations
+- **Goals Tracking**: Set and track financial goals with progress visualization, time estimates, and CSV export
+- **Expense Tracker**: Log and categorize expenses with monthly breakdowns, charts, and CSV export
+- **Financial Education**: Learn about financial independence, emergency funds, and Latvia's pension system with improved UI
 - **Financial Advisor Directory**: Find recommended financial consultants in Latvia
+- **Newsletter**: Beehiiv-powered newsletter subscription for financial tips
+- **SEO Optimized**: 100% SEO score with complete meta tags, structured data, and legal pages
 
 ## Tech Stack
 
 - React 18 + TypeScript
-- Tailwind CSS
-- React Router DOM
-- Zustand for state management
+- Tailwind CSS (with explicit color values for production)
+- React Router DOM v6
+- Recharts for data visualization
+- React Hot Toast for notifications
+- Beehiiv for newsletter integration
 - Vite for build tooling
 - localStorage for data persistence (no backend required)
+- Full SEO optimization (Open Graph, JSON-LD, sitemap)
 
 ## Getting Started
 

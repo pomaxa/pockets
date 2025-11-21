@@ -16,10 +16,14 @@
 
 1. **Home (Landing Page)**
    - Hero section with clear value proposition
-   - "How It Works" with 3 simple steps
-   - Email subscription form
+   - Value propositions section with feature highlights
+   - Financial tools showcase with 4 main features
+   - Category budget calculator with income input
+   - Research-based budget percentage recommendations (50/30/20 rule)
+   - Interactive category cards with descriptions and examples
+   - Beehiiv newsletter subscription integration
    - FAQ section (5 questions)
-   - Professional footer
+   - Professional footer with legal pages
 
 2. **Calculator Page**
    - Salary and expense input form
@@ -54,28 +58,48 @@
 ### 🧩 Components
 
 **Core Components:**
-- `Layout.tsx` - App layout with header, navigation, footer
-- `App.tsx` - Main app with routing
+- `Layout.tsx` - App layout with header, navigation, mobile menu, footer
+- `MobileMenu.tsx` - Responsive mobile navigation drawer
+- `App.tsx` - Main app with routing and toast notifications
+- `Button.tsx` - Reusable button component with variants
+- `Modal.tsx` - Modal dialog component
+
+**Home Page Components:**
+- `HeroSection.tsx` - Hero banner with gradient backgrounds
+- `Section.tsx` - Reusable section wrapper with variants
+- `SectionHeader.tsx` - Section titles and subtitles
+- `FeatureCard.tsx` - Feature showcase cards with icons
+- `CategoryCard.tsx` - Enhanced budget category cards with:
+  - Percentage recommendations
+  - Calculated amounts based on income
+  - Descriptions and real-world examples
+  - Latvia-specific references (Rimi, Maxima, Wolt, Bolt)
+- `SkipLink.tsx` - Accessibility skip-to-content link
 
 **Calculator Components:**
-- Form with validation
+- Form with validation and Latvia tax calculations
 - Results display with formatted currency
 - Pocket breakdown visualization
+- Chart visualizations with Recharts
 
 **Goals Components:**
-- Goal creation form
-- Goal cards with progress bars
-- Contribution management
+- Goal creation form with date picker
+- Goal cards with progress bars and time estimates
+- Contribution management with quick-add buttons
+- CSV export functionality
 
 **Expenses Components:**
-- Expense entry form
+- Expense entry form with category selection
 - Category breakdown charts
-- Expense table with filters
+- Monthly trend visualization
+- Expense table with filters and sorting
+- CSV export functionality
 
 **Info Components:**
-- Tabbed content sections
-- Consultant cards
-- Educational content
+- Tabbed navigation with improved contrast
+- Educational content sections
+- Consultant directory cards
+- Latvia pension system guide
 
 ### 🛠 Utilities & Hooks
 
@@ -98,50 +122,85 @@
 ## Tech Stack
 
 - **Framework:** React 18 with TypeScript
-- **Styling:** Tailwind CSS (custom color scheme)
+- **Styling:** Tailwind CSS (custom color scheme with primary-500 explicit values)
 - **Routing:** React Router DOM v6
-- **State:** Zustand + React Context
+- **Charts:** Recharts for data visualization
+- **Notifications:** React Hot Toast
+- **Newsletter:** Beehiiv integration
+- **State:** React Hooks (useState, custom hooks)
 - **Storage:** localStorage (no backend required)
 - **Build:** Vite (fast, modern bundler)
+- **SEO:** Optimized meta tags, Open Graph, JSON-LD structured data
 - **Deployment:** Vercel/Netlify ready
 
 ---
 
 ## Key Features
 
-### ✅ Calculator
-- Latvia-specific tax calculations
+### ✅ Budget Calculator
+- Interactive income-based budget calculator
+- Research-based percentage recommendations (50/30/20 rule)
+- Real-time euro amount calculations for each category:
+  - Housing: 25-30%
+  - Food & Dining: 10-15%
+  - Transport: 10-15%
+  - Entertainment: 5-10%
+  - Health: 5-10%
+  - Utilities: 5-10%
+- Enhanced category cards with descriptions and examples
+- Latvia-specific examples (Rimi, Maxima, Wolt, Bolt Food)
+
+### ✅ Pocket Calculator
+- Latvia-specific tax calculations (~20% PIT)
 - Mandatory expenses tracking
 - 50/50 savings recommendation
 - Emergency fund planning
 - Profile persistence
+- Chart visualizations
 
 ### ✅ Goals Tracking
 - Unlimited financial goals
-- Progress visualization
+- Progress visualization with percentage bars
 - Time-to-goal estimates
-- Quick contribution buttons
-- Goal completion detection
+- Quick contribution buttons (€50, €100, custom)
+- Goal completion celebration
+- CSV export functionality
 
 ### ✅ Expense Tracking
-- Multi-category expenses
-- Monthly breakdowns
-- Daily averages
-- Visual category analysis
-- Historical filtering
+- Multi-category expense entry
+- Monthly breakdowns and summaries
+- Daily averages calculation
+- Visual category analysis with charts
+- Historical month-by-month filtering
+- Sortable expense table
+- CSV export functionality
 
 ### ✅ Financial Education
-- 4 educational sections
-- Latvia pension system info
-- Financial advisor directory
-- Practical tips and guidance
+- 4 educational sections with tabbed navigation
+- Financial Independence principles and steps
+- Emergency Fund guide with savings recommendations
+- Latvia pension system detailed breakdown (3 pillars)
+- Financial advisor directory with contact info
+- Improved button contrast for better accessibility
+
+### ✅ SEO & Marketing
+- 100% SEO optimization score
+- Complete meta tags (Open Graph, Twitter Cards)
+- JSON-LD structured data (SoftwareApplication, Organization, FAQPage)
+- Robots.txt and XML sitemap
+- Privacy Policy and Terms of Service pages
+- Beehiiv newsletter subscription integration
+- Canonical URLs and theme colors
 
 ### ✅ UX/UI
-- Clean, modern design
-- Mobile responsive
-- Fast loading (<2s)
+- Clean, modern design with consistent green (#10b981) color scheme
+- Fully mobile responsive with mobile menu drawer
+- Fast loading (<2s) with Vite optimization
 - No authentication required
-- Data privacy (local only)
+- Data privacy (local only, no server)
+- Accessibility features (skip links, ARIA labels)
+- Toast notifications for user feedback
+- Explicit Tailwind color values for production builds
 
 ---
 
