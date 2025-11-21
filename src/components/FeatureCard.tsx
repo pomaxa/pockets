@@ -10,7 +10,7 @@ interface FeatureCardProps {
 export default function FeatureCard({ icon, title, description, link }: FeatureCardProps) {
   const content = (
     <>
-      <div className="flex items-center justify-center w-16 h-16 mb-4 bg-primary/10 rounded-lg">
+      <div className="flex items-center justify-center w-16 h-16 mb-4 bg-primary-500/10 rounded-lg">
         <img src={icon} alt="" aria-hidden="true" className="w-8 h-8" width="32" height="32" />
       </div>
       <h3 className="text-xl font-bold mb-3 text-gray-900">{title}</h3>
@@ -24,7 +24,7 @@ export default function FeatureCard({ icon, title, description, link }: FeatureC
     return (
       <Link
         to={link}
-        className={`${baseClasses} hover:scale-105 block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2`}
+        className={`${baseClasses} hover:scale-105 block focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
       >
         {content}
       </Link>
